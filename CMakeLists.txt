@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.4)
 enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
-set(QTGSTREAMER_VERSION 0.10.2.1)
+set(QTGSTREAMER_VERSION 1.0.0.1)
 
 option(QTGSTREAMER_STATIC "Build QtGStreamer as a static library" OFF)
 option(QTGSTREAMER_TESTS "Build QtGStreamer's tests" OFF)
@@ -54,26 +54,26 @@ else()
     endmacro()
 endif()
 
-find_package(GStreamer 0.10.33 COMPONENTS base)
+find_package(GStreamer 1.0.0 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
-                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
+                                  "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
 macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
                                                "Used for building the qwidgetvideosink element"
-                                               "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
+                                               "http://gstreamer.freedesktop.org/" FALSE "1.0.0")
 
-find_package(GStreamerPluginsBase 0.10.36 COMPONENTS app interfaces video pbutils)
+find_package(GStreamerPluginsBase 1.0.0 COMPONENTS app interfaces video pbutils)
 macro_log_feature(GSTREAMER_APP_LIBRARY_FOUND "GStreamer app library"
                                               "Required to build QtGStreamerUtils"
-                                              "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
+                                              "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
 macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
                                                 "Required to build QtGStreamer"
-                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
+                                                "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
                                                 "Used for building the qwidgetvideosink element"
-                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
+                                                "http://gstreamer.freedesktop.org/" FALSE "1.0.0")
 macro_log_feature(GSTREAMER_PBUTILS_LIBRARY_FOUND "GStreamer pbutils library"
                                                 "Used for building the Discoverer API"
-                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.36")
+                                                "http://gstreamer.freedesktop.org/" TRUE "1.0.0")
 
 find_package(GLIB2)
 macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.org/" TRUE)
@@ -117,7 +117,7 @@ set(INCLUDES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include/QtGStreamer)
 if (USE_GST_PLUGIN_DIR)
     set(PLUGINS_INSTALL_DIR ${GSTREAMER_PLUGIN_DIR})
 else()
-    set(PLUGINS_INSTALL_DIR ${LIB_INSTALL_DIR}/gstreamer-0.10)
+    set(PLUGINS_INSTALL_DIR ${LIB_INSTALL_DIR}/gstreamer-${GSTREAMER_ABI_VERSION})
 endif()
 
 if (USE_QT_PLUGIN_DIR)
