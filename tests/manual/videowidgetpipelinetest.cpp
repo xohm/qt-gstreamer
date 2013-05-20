@@ -40,9 +40,9 @@ VideoWidgetPipelineTest::VideoWidgetPipelineTest(QWidget *parent, Qt::WindowFlag
 {
     m_ui.setupUi(this);
 
-    m_pipeline = QGst::ElementFactory::make("playbin2").dynamicCast<QGst::Pipeline>();
+    m_pipeline = QGst::ElementFactory::make("playbin").dynamicCast<QGst::Pipeline>();
     if (!m_pipeline) {
-        throw std::runtime_error("Unable to create a playbin2 pipeline");
+        throw std::runtime_error("Unable to create a playbin pipeline");
     }
 
     m_ui.videoWidget->watchPipeline(m_pipeline);
