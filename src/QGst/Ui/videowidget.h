@@ -40,7 +40,7 @@ class AbstractRenderer;
  * on the widget.
  * \li Create a pipeline and let the widget watch the pipeline using the
  * watchPipeline() method. This will cause the widget to watch the bus for
- * the "prepare-xwindow-id" that all XOverlay sinks send right before
+ * the "prepare-window-handle" that all XOverlay sinks send right before
  * creating a window and will embed any sink that sends this message.
  * You need to make sure however that there can only be one video sink in
  * this pipeline. If there are more than one, you should handle them yourself

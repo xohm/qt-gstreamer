@@ -248,7 +248,7 @@ private:
     {
         switch (msg->type()) {
         case MessageElement:
-            if (msg->internalStructure()->name() == QLatin1String("prepare-xwindow-id")) {
+          if (gst_is_video_overlay_prepare_window_handle_message(static_cast<GstMessage*>(msg))) {
                 XOverlayPtr overlay = msg->source().dynamicCast<XOverlay>();
                 m_renderer->setVideoSink(overlay);
             }
