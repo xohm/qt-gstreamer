@@ -834,7 +834,7 @@ GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int patter
     }
 
     MAKE_ELEMENT(videotestsrc, "videotestsrc");
-    MAKE_ELEMENT(ffmpegcolorspace, "ffmpegcolorspace");
+    MAKE_ELEMENT(videoconvert, "videoconvert");
     MAKE_ELEMENT(capsfilter, "capsfilter");
     MAKE_ELEMENT(fakesink, "fakesink");
 
@@ -845,7 +845,7 @@ GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int patter
     g_object_set(videotestsrc, "pattern", pattern, NULL);
     g_object_set(fakesink, "enable-last-buffer", TRUE, NULL);
 
-    if (!gst_element_link_many(videotestsrc, ffmpegcolorspace, capsfilter, fakesink, NULL)) {
+    if (!gst_element_link_many(videotestsrc, videoconvert, capsfilter, fakesink, NULL)) {
         QWARN("Failed to link generate-test-buffer-pipeline");
         return NULL;
     }
@@ -881,7 +881,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     MAKE_ELEMENT(qtvideosink, context ? "qtglvideosink" : "qtvideosink");
 
     MAKE_ELEMENT(queue2, "queue");
-    MAKE_ELEMENT(colorspace, "ffmpegcolorspace");
+    MAKE_ELEMENT(colorspace, "videoconvert");
     MAKE_ELEMENT(videoscale, "videoscale");
     MAKE_ELEMENT(capsfilter2, "capsfilter");
     MAKE_ELEMENT(fakesink, "fakesink");

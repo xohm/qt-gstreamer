@@ -57,10 +57,10 @@ VideoOrientationTest::VideoOrientationTest(QWidget *parent, Qt::WindowFlags f)
 
     m_pipeline->add(m_src);
 
-    //Insert a ffmpegcolorspace converter element, in case the camera output is not compatible with our sink
-    m_converter = QGst::ElementFactory::make("ffmpegcolorspace");
+    //Insert a videoconvert converter element, in case the camera output is not compatible with our sink
+    m_converter = QGst::ElementFactory::make("videoconvert");
     if (!m_converter) {
-        throw std::runtime_error("Unable to create the ffmpegcolorspace converter");
+        throw std::runtime_error("Unable to create the videoconvert converter");
     }
 
     m_pipeline->add(m_converter);

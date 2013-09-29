@@ -196,10 +196,10 @@ QGst::BinPtr Recorder::createVideoSrcBin()
     try {
         if (m_ui.videoSourceComboBox->currentIndex() == 0) { //camera
             videoBin = QGst::Bin::fromDescription("autovideosrc name=\"videosrc\" ! "
-                                                  "ffmpegcolorspace ! theoraenc ! queue");
+                                                  "videoconvert ! theoraenc ! queue");
         } else { //screencast
             videoBin = QGst::Bin::fromDescription("ximagesrc name=\"videosrc\" ! "
-                                                  "ffmpegcolorspace ! theoraenc ! queue");
+                                                  "videoconvert ! theoraenc ! queue");
         }
     } catch (const QGlib::Error & error) {
         qCritical() << "Failed to create video source bin:" << error;

@@ -248,7 +248,7 @@ void VoipExample::onRtpBinPadAdded(const QGst::PadPtr & pad)
             );
         } else {
             bin = QGst::Bin::fromDescription(
-                "rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! autovideosink"
+                "rtph264depay ! ffdec_h264 ! videoconvert ! autovideosink"
             );
         }
     } catch (const QGlib::Error & error) {
