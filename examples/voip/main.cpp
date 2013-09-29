@@ -118,7 +118,7 @@ void VoipExample::on_startCallButton_clicked()
         QGst::ElementPtr audiosrc;
         try {
             audiosrc = QGst::Bin::fromDescription(
-                "autoaudiosrc ! queue ! audioconvert ! audiorate ! audio/x-raw-int,rate=8000 "
+                "autoaudiosrc ! queue ! audioconvert ! audiorate ! audio/x-raw,rate=8000 "
                 "! speexenc ! rtpspeexpay"
             );
         } catch (const QGlib::Error & error) {
@@ -173,7 +173,7 @@ void VoipExample::on_startCallButton_clicked()
         QGst::ElementPtr videosrc;
         try {
             videosrc = QGst::Bin::fromDescription(
-                "videotestsrc is-live=true ! video/x-raw-yuv,width=320,height=240,framerate=15/1 "
+                "videotestsrc is-live=true ! video/x-raw,width=320,height=240,framerate=15/1 "
                 "! x264enc tune=zerolatency byte-stream=true bitrate=300 ! rtph264pay"
             );
         } catch (const QGlib::Error & error) {

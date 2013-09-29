@@ -40,7 +40,7 @@ void BufferTest::simpleTest()
 void BufferTest::capsTest()
 {
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
 
