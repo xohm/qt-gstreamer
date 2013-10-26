@@ -60,7 +60,7 @@ void Caps::append(const CapsPtr & caps2)
 
 void Caps::merge(const CapsPtr & caps2)
 {
-    gst_caps_merge(object<GstCaps>(), gst_caps_copy(caps2));
+    m_object = gst_caps_merge(object<GstCaps>(), gst_caps_copy(caps2));
 }
 
 void Caps::setValue(const char *field, const QGlib::Value & value)
@@ -75,7 +75,7 @@ bool Caps::simplify()
 
 void Caps::truncate()
 {
-    gst_caps_truncate(object<GstCaps>());
+    m_object = gst_caps_truncate(object<GstCaps>());
 }
 
 StructurePtr Caps::internalStructure(uint index)
@@ -91,7 +91,7 @@ void Caps::appendStructure(const Structure & structure)
 
 void Caps::mergeStructure(const Structure & structure)
 {
-    gst_caps_merge_structure(object<GstCaps>(), gst_structure_copy(structure));
+    m_object = gst_caps_merge_structure(object<GstCaps>(), gst_structure_copy(structure));
 }
 
 void Caps::removeStructure(uint index)
