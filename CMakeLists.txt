@@ -54,26 +54,26 @@ else()
     endmacro()
 endif()
 
-find_package(GStreamer 0.10.33 COMPONENTS base)
+find_package(GStreamer 1.0 COMPONENTS base)
 macro_log_feature(GSTREAMER_FOUND "GStreamer" "Required to build QtGStreamer"
-                                  "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
+                                  "http://gstreamer.freedesktop.org/" TRUE "1.0")
 macro_log_feature(GSTREAMER_BASE_LIBRARY_FOUND "GStreamer base library"
                                                "Used for building the qwidgetvideosink element"
-                                               "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
+                                               "http://gstreamer.freedesktop.org/" FALSE "1.0")
 
 find_package(GStreamerPluginsBase 0.10.36 COMPONENTS app interfaces video pbutils)
 macro_log_feature(GSTREAMER_APP_LIBRARY_FOUND "GStreamer app library"
                                               "Required to build QtGStreamerUtils"
-                                              "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
+                                              "http://gstreamer.freedesktop.org/" TRUE "1.0")
 macro_log_feature(GSTREAMER_INTERFACES_LIBRARY_FOUND "GStreamer interfaces library"
                                                 "Required to build QtGStreamer"
-                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.33")
+                                                "http://gstreamer.freedesktop.org/" TRUE "1.0")
 macro_log_feature(GSTREAMER_VIDEO_LIBRARY_FOUND "GStreamer video library"
                                                 "Used for building the qwidgetvideosink element"
-                                                "http://gstreamer.freedesktop.org/" FALSE "0.10.33")
+                                                "http://gstreamer.freedesktop.org/" FALSE "1.0")
 macro_log_feature(GSTREAMER_PBUTILS_LIBRARY_FOUND "GStreamer pbutils library"
                                                 "Used for building the Discoverer API"
-                                                "http://gstreamer.freedesktop.org/" TRUE "0.10.36")
+                                                "http://gstreamer.freedesktop.org/" TRUE "1.0")
 
 find_package(GLIB2)
 macro_log_feature(GLIB2_FOUND "GLib" "Required to build QtGLib" "http://www.gtk.org/" TRUE)

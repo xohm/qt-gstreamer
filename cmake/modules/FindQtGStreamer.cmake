@@ -46,11 +46,11 @@ else()
         # Normally, this path is never executed. It is just provided as a fallback in case something goes wrong.
         find_library(QTGLIB_LIBRARY QtGLib-2.0
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
-        find_library(QTGSTREAMER_LIBRARY QtGStreamer-0.10
+        find_library(QTGSTREAMER_LIBRARY QtGStreamer-1.0
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
-        find_library(QTGSTREAMER_UI_LIBRARY QtGStreamerUi-0.10
+        find_library(QTGSTREAMER_UI_LIBRARY QtGStreamerUi-1.0
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
-        find_library(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils-0.10
+        find_library(QTGSTREAMER_UTILS_LIBRARY QtGStreamerUtils-1.0
                      PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../lib")
         find_path(QTGSTREAMER_INCLUDE_DIR QGst/global.h
                   PATHS "${_QTGSTREAMER_CONFIG_DIR}/../../include"
