@@ -70,7 +70,7 @@ void Caps::setValue(const char *field, const QGlib::Value & value)
 
 bool Caps::simplify()
 {
-    return gst_caps_do_simplify(object<GstCaps>());
+    return gst_caps_simplify(object<GstCaps>());
 }
 
 void Caps::truncate()
