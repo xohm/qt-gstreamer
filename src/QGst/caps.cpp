@@ -218,7 +218,7 @@ namespace Private {
 
 QGlib::RefCountedObject *wrapCaps(void *caps)
 {
-    return QGlib::constructWrapper(GST_CAPS(caps)->type, caps);
+    return QGlib::constructWrapper(QGlib::Type::fromInstance(caps), caps);
 }
 
 } //namespace Private
