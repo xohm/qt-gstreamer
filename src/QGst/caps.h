@@ -63,7 +63,6 @@ public:
     bool isSubsetOf(const CapsPtr & superset) const;
     bool canIntersect(const CapsPtr & caps2) const;
     CapsPtr getIntersection(const CapsPtr & caps2) const;
-    CapsPtr getUnion(const CapsPtr & caps2) const;
     CapsPtr getNormal() const;
     CapsPtr subtract(const CapsPtr & subtrahend) const;
 

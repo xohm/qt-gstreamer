@@ -155,11 +155,6 @@ CapsPtr Caps::getIntersection(const CapsPtr & caps2) const
     return CapsPtr::wrap(gst_caps_intersect(object<GstCaps>(), caps2), false);
 }
 
-CapsPtr Caps::getUnion(const CapsPtr & caps2) const
-{
-    return CapsPtr::wrap(gst_caps_union(object<GstCaps>(), caps2), false);
-}
-
 CapsPtr Caps::getNormal() const
 {
     return CapsPtr::wrap(gst_caps_normalize(object<GstCaps>()), false);
