@@ -88,13 +88,25 @@ CapsEventPtr CapsEvent::create(const CapsPtr &caps)
 
 //********************************************************
 
-NewSegmentEventPtr NewSegmentEvent::create(bool update, double rate, double appliedRate,
-                                          Format format, qint64 start, qint64 stop, qint64 position)
+NewSegmentEventPtr NewSegmentEvent::create(SegmentFlags flags, double rate, double appliedRate,
+                                           Format format, quint64 base, quint64 offset,
+                                           quint64 start, quint64 stop, quint64 time,
+                                           quint64 position, quint64 duration)
 {
-    GstEvent * e = gst_event_new_new_segment_full(update, rate, appliedRate,
-                                                  static_cast<GstFormat>(format), start, stop,
-                                                  position);
+    GstSegment s;
+    s.flags = static_cast<GstSegmentFlags>(static_cast<int>(flags));
+    s.rate = rate;
+    s.applied_rate = appliedRate;
+    s.format = static_cast<GstFormat>(format);
+    s.base = base;
+    s.offset = offset;
+    s.start = start;
+    s.stop = stop;
+    s.time = time;
+    s.position = position;
+    s.duration = duration;
 
+    GstEvent * e = gst_event_new_segment(&s);
     return NewSegmentEventPtr::wrap(e, false);
 }
 

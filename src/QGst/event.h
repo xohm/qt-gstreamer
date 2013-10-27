@@ -116,8 +116,10 @@ class QTGSTREAMER_EXPORT NewSegmentEvent : public Event
 {
     QGST_WRAPPER_FAKE_SUBCLASS(NewSegment, Event)
 public:
-    static NewSegmentEventPtr create(bool update, double rate, double appliedRate, Format format,
-                                     qint64 start, qint64 stop, qint64 position);
+    static NewSegmentEventPtr create(SegmentFlags flags, double rate, double appliedRate,
+                                     Format format, quint64 base, quint64 offset,
+                                     quint64 start, quint64 stop, quint64 time,
+                                     quint64 position, quint64 duration);
 
     bool isUpdate() const;
     double rate() const;

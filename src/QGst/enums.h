@@ -48,6 +48,18 @@ QGST_REGISTER_TYPE(QGst::ObjectFlags);
 
 
 namespace QGst {
+    enum SegmentFlag {
+	None = 0,
+	Reset = 1,
+	Skip = 2,
+	Segment = 3
+    };
+    Q_DECLARE_FLAGS(SegmentFlags, SegmentFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(SegmentFlags);
+}
+QGST_REGISTER_TYPE(QGst::SegmentFlags);
+
+namespace QGst {
     enum State {
         StateVoidPending = 0,
         StateNull = 1,
