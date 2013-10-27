@@ -46,6 +46,14 @@ namespace QGst {
 }
 QGST_REGISTER_TYPE(QGst::ObjectFlags);
 
+namespace QGst {
+    enum QOSType {
+	Overflow = 0,
+	Underflow = 1,
+	Throttle = 2
+    };
+}
+QGST_REGISTER_TYPE(QGst::QOSType);
 
 namespace QGst {
     enum SegmentFlag {
