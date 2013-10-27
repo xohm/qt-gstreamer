@@ -121,13 +121,17 @@ public:
                                      quint64 start, quint64 stop, quint64 time,
                                      quint64 position, quint64 duration);
 
-    bool isUpdate() const;
+    SegmentFlags flags() const;
     double rate() const;
     double appliedRate() const;
     Format format() const;
+    qint64 base() const;
+    qint64 offset() const;
     qint64 start() const;
     qint64 stop() const;
+    qint64 time() const;
     qint64 position() const;
+    qint64 duration() const;
 };
 
 /*! \headerfile event.h <QGst/Event>
