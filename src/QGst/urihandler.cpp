@@ -68,7 +68,13 @@ QUrl UriHandler::uri() const
 
 bool UriHandler::setUri(const QUrl & uri)
 {
-    return gst_uri_handler_set_uri(object<GstURIHandler>(), uri.toEncoded());
+    GError *error = NULL;
+    bool result;
+    result = gst_uri_handler_set_uri(object<GstURIHandler>(), uri.toEncoded(), &error);
+    if (error) {
+	throw QGlib::Error(error);
+    }
+    return result;
 }
 
 } //namespace QGst
