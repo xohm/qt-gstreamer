@@ -113,7 +113,16 @@ bool Pad::isBlocking() const
 
 bool Pad::setBlocked(bool blocked)
 {
-    return gst_pad_set_blocked(object<GstPad>(), blocked);
+    GstPadProbeType probe = GST_PAD_PROBE_TYPE_IDLE;
+    if (blocked) {
+	probe = GST_PAD_PROBE_TYPE_BLOCK;
+    }
+    gulong id = gst_pad_add_probe(object<GstPad>(),
+				  probe,
+				  0, // FIXME: callback to receive state
+				  0,
+				  0);
+    return id != 0;
 }
 
 bool Pad::query(const QueryPtr & query)
