@@ -44,9 +44,6 @@ public:
     ClockTime presentationTimeStamp() const;
     ClockTime duration() const;
 
-    CapsPtr caps() const;
-    void setCaps(const CapsPtr & caps);
-
     quint64 offset() const;
     quint64 offsetEnd() const;
 
