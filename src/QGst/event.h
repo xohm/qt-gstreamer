@@ -60,7 +60,7 @@ public:
     EventType type() const;
     QString typeName() const;
 
-    StructurePtr internalStructure();
+    const StructurePtr internalStructure();
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);
