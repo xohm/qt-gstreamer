@@ -72,7 +72,7 @@ bool Pad::unlink(const PadPtr & sink)
 
 CapsPtr Pad::caps() const
 {
-    return CapsPtr::wrap(gst_pad_get_caps_reffed(object<GstPad>()), false);
+    return CapsPtr::wrap(gst_pad_query_caps(object<GstPad>(), NULL), false);
 }
 
 CapsPtr Pad::allowedCaps() const
