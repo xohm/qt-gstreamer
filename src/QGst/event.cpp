@@ -85,6 +85,12 @@ EosEventPtr EosEvent::create()
 }
 
 //********************************************************
+CapsEventPtr CapsEvent::create(const CapsPtr &caps)
+{
+    return CapsEventPtr::wrap(gst_event_new_caps(caps), false);
+}
+
+//********************************************************
 
 NewSegmentEventPtr NewSegmentEvent::create(bool update, double rate, double appliedRate,
                                           Format format, qint64 start, qint64 stop, qint64 position)

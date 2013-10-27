@@ -87,7 +87,8 @@ CapsPtr Pad::currentCaps() const
 
 bool Pad::setCaps(const CapsPtr & caps)
 {
-    return gst_pad_set_caps(object<GstPad>(), caps);
+    CapsEventPtr event = CapsEvent::create(caps);
+    return sendEvent(event);
 }
 
 bool Pad::isActive() const
