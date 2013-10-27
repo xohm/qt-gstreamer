@@ -18,9 +18,17 @@
 #include "element.h"
 #include <gst/gstelement.h>
 #include <gst/gstelementfactory.h>
+#include <gst/gstelementmetadata.h>
 #include <gst/gstutils.h>
 
 namespace QGst {
+
+static const QByteArray longName(GST_ELEMENT_METADATA_LONGNAME);
+static const QByteArray klass(GST_ELEMENT_METADATA_KLASS);
+static const QByteArray description(GST_ELEMENT_METADATA_DESCRIPTION);
+static const QByteArray author(GST_ELEMENT_METADATA_AUTHOR);
+static const QByteArray documentationUri(GST_ELEMENT_METADATA_DOC_URI);
+static const QByteArray iconName(GST_ELEMENT_METADATA_ICON_NAME);
 
 //static
 ElementFactoryPtr ElementFactory::find(const char *factoryName)
@@ -43,34 +51,9 @@ QGlib::Type ElementFactory::elementType() const
     return gst_element_factory_get_element_type(object<GstElementFactory>());
 }
 
-QString ElementFactory::longName() const
+QString ElementFactory::metadata(const QByteArray &key) const
 {
-    return QString::fromUtf8(gst_element_factory_get_longname(object<GstElementFactory>()));
-}
-
-QString ElementFactory::klass() const
-{
-    return QString::fromUtf8(gst_element_factory_get_klass(object<GstElementFactory>()));
-}
-
-QString ElementFactory::description() const
-{
-    return QString::fromUtf8(gst_element_factory_get_description(object<GstElementFactory>()));
-}
-
-QString ElementFactory::author() const
-{
-    return QString::fromUtf8(gst_element_factory_get_author(object<GstElementFactory>()));
-}
-
-QString ElementFactory::documentationUri() const
-{
-    return QString::fromUtf8(gst_element_factory_get_documentation_uri(object<GstElementFactory>()));
-}
-
-QString ElementFactory::iconName() const
-{
-    return QString::fromUtf8(gst_element_factory_get_icon_name(object<GstElementFactory>()));
+    return QString::fromUtf8(gst_element_factory_get_metadata(object<GstElementFactory>(), key));
 }
 
 uint ElementFactory::padTemplatesCount() const
