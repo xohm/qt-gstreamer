@@ -51,7 +51,9 @@ public:
      */
     CapsPtr caps() const;
     CapsPtr allowedCaps() const;
-    CapsPtr negotiatedCaps() const;
+    /*! Replaces the older method negoatiateCaps
+     */
+    CapsPtr currentCaps() const;
     bool setCaps(const CapsPtr & caps);
 
     bool isActive() const;
