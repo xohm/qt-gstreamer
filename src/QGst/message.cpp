@@ -413,9 +413,9 @@ LatencyMessagePtr LatencyMessage::create(const ObjectPtr & source)
 
 //********************************************************
 
-AsyncDoneMessagePtr AsyncDoneMessage::create(const ObjectPtr & source)
+    AsyncDoneMessagePtr AsyncDoneMessage::create(const ObjectPtr & source, ClockTime running_time)
 {
-    return AsyncDoneMessagePtr::wrap(gst_message_new_async_done(source), false);
+    return AsyncDoneMessagePtr::wrap(gst_message_new_async_done(source, running_time), false);
 }
 
 //********************************************************
