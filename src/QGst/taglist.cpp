@@ -1074,8 +1074,10 @@ void TagList::setDateTime(const QDateTime & value)
 
 QDebug operator<<(QDebug debug, const TagList & taglist)
 {
+    gchar *text = gst_tag_list_to_string(taglist);
     debug.nospace() << "QGst::TagList("
-                    << QGlib::Private::stringFromGCharPtr(gst_structure_to_string(taglist)) << ")";
+                    << QGlib::Private::stringFromGCharPtr(text) << ")";
+    g_free(text);
     return debug.space();
 }
 
