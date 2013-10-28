@@ -28,6 +28,7 @@ set(QtGStreamer_SRCS
     buffer.cpp
     event.cpp
     clocktime.cpp
+    sample.cpp
     taglist.cpp
     bufferlist.cpp
     discoverer.cpp
