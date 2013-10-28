@@ -31,6 +31,7 @@
 #include <QtGui/QResizeEvent>
 #include <QtGui/QApplication>
 #include <QtGui/QHBoxLayout>
+#include <gst/video/videooverlay.h>
 
 #ifndef QTGSTREAMER_UI_NO_OPENGL
 # include <QtOpenGL/QGLWidget>
