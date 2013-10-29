@@ -45,8 +45,8 @@ namespace Utils {
  * should be avoided.
  *
  * If a blocking behaviour is not desirable, you can subclass this class and implement the
- * newPreroll(), newBuffer() and newBufferList() which will be called to notify you when a new
- * buffer is available.
+ * newPreroll(), and newSample() which will be called to notify you when a new
+ * sample is available.
  *
  * setCaps() can be used to control the formats that appsink can receive. This property can contain
  * non-fixed caps. The format of the pulled buffers can be obtained by getting the buffer caps.
@@ -163,12 +163,7 @@ protected:
     /*! Called when a new buffer is available. The new buffer can be retrieved
      * with pullBuffer() either from this function or from any other thread.
      * \note This function is called from the steaming thread. */
-    virtual FlowReturn newBuffer();
-
-    /*! Called when a new buffer list is available. The new buffer list can be retrieved
-     * with pullBufferList() either from this function or from any other thread.
-     * \note This function is called from the steaming thread. */
-    virtual FlowReturn newBufferList();
+    virtual FlowReturn newSample();
 
 private:
     /* vtable padding */
