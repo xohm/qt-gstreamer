@@ -166,29 +166,20 @@ void ApplicationSink::enableDrop(bool enable)
     }
 }
 
-BufferPtr ApplicationSink::pullPreroll()
+SamplePtr ApplicationSink::pullPreroll()
 {
-    BufferPtr buf;
+    SamplePtr buf;
     if (d->appSink()) {
-        buf = BufferPtr::wrap(gst_app_sink_pull_preroll(d->appSink()), false);
+        buf = SamplePtr::wrap(gst_app_sink_pull_preroll(d->appSink()), false);
     }
     return buf;
 }
 
-BufferPtr ApplicationSink::pullBuffer()
+SamplePtr ApplicationSink::pullSample()
 {
-    BufferPtr buf;
+    SamplePtr buf;
     if (d->appSink()) {
-        buf = BufferPtr::wrap(gst_app_sink_pull_buffer(d->appSink()), false);
-    }
-    return buf;
-}
-
-BufferListPtr ApplicationSink::pullBufferList()
-{
-    BufferListPtr buf;
-    if (d->appSink()) {
-        buf = BufferListPtr::wrap(gst_app_sink_pull_buffer_list(d->appSink()), false);
+        buf = SamplePtr::wrap(gst_app_sink_pull_sample(d->appSink()), false);
     }
     return buf;
 }

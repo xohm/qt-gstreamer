@@ -20,7 +20,7 @@
 
 #include "global.h"
 #include "../element.h"
-#include "../bufferlist.h"
+#include "../sample.h"
 
 namespace QGst {
 namespace Utils {
@@ -33,7 +33,7 @@ namespace Utils {
  * provides external API functions. This class exports those API functions in the bindings
  * and makes it easy to implement a custom sink.
  *
- * The normal way of retrieving buffers from appsink is by using the pullBuffer() and pullPreroll()
+ * The normal way of retrieving samples from appsink is by using the pullSample() and pullPreroll()
  * methods. These methods block until a buffer becomes available in the sink or when the sink is
  * shut down or reaches EOS.
  *
@@ -51,7 +51,7 @@ namespace Utils {
  * setCaps() can be used to control the formats that appsink can receive. This property can contain
  * non-fixed caps. The format of the pulled buffers can be obtained by getting the buffer caps.
  *
- * If one of the pullPreroll() or pullBuffer() methods return NULL, the appsink is stopped or in
+ * If one of the pullPreroll() or pullSample() methods return NULL, the appsink is stopped or in
  * the EOS state. You can check for the EOS state with isEos(). The eos() virtual method can also
  * be reimplemented to be informed when the EOS state is reached to avoid polling.
  *
@@ -113,15 +113,15 @@ public:
      * Calling this function after doing a seek will give the buffer right after the seek position.
      *
      * Note that the preroll buffer will also be returned as the first buffer when calling
-     * pullBuffer().
+     * pullSample().
      *
-     * If an EOS event was received before any buffers, this function returns a null BufferPtr.
+     * If an EOS event was received before any buffers, this function returns a null SamplePtr.
      * Use isEos() to check for the EOS condition.
      *
      * This function blocks until a preroll buffer or EOS is received or the appsink element
      * is set to the READY/NULL state.
      */
-    BufferPtr pullPreroll();
+    SamplePtr pullPreroll();
 
     /*! This function blocks until a buffer or EOS becomes available or the appsink
      * element is set to the READY/NULL state.
@@ -131,24 +131,10 @@ public:
      * at its own rate. Note that when the application does not pull buffers fast enough, the
      * queued buffers could consume a lot of memory, especially when dealing with raw video frames.
      *
-     * If an EOS event was received before any buffers, this function returns a null BufferPtr.
+     * If an EOS event was received before any buffers, this function returns a null SamplePtr.
      * Use isEos() to check for the EOS condition.
      */
-    BufferPtr pullBuffer();
-
-    /*! This function blocks until a buffer list or EOS becomes available or the appsink
-     * element is set to the READY/NULL state.
-     *
-     * This function will only return buffer lists when the appsink is in the PLAYING state.
-     * All rendered buffer lists will be put in a queue so that the application can pull buffer
-     * lists at its own rate. Note that when the application does not pull buffer lists fast
-     * enough, the queued buffer lists could consume a lot of memory, especially when dealing
-     * with raw video frames.
-     *
-     * If an EOS event was received before any buffer lists, this function returns a null
-     * BufferListPtr. Use isEos() to check for the EOS condition.
-     */
-    BufferListPtr pullBufferList();
+    SamplePtr pullSample();
 
 protected:
     /*! Called when the end-of-stream has been reached.
@@ -161,7 +147,7 @@ protected:
     virtual FlowReturn newPreroll();
 
     /*! Called when a new buffer is available. The new buffer can be retrieved
-     * with pullBuffer() either from this function or from any other thread.
+     * with pullSample() either from this function or from any other thread.
      * \note This function is called from the steaming thread. */
     virtual FlowReturn newSample();
 
