@@ -21,32 +21,14 @@ BufferFormat BufferFormat::fromCaps(GstCaps *caps)
 {
     BufferFormat result;
     if (caps) {
-        GstVideoFormat format;
-        int width;
-        int height;
-        if (gst_video_format_parse_caps(caps, &format, &width, &height)) {
-            result.d->videoFormat = format;
-            result.d->frameSize = QSize(width, height);
-
-            if (!gst_video_parse_caps_pixel_aspect_ratio(caps,
-                    &result.d->pixelAspectRatio.numerator,
-                    &result.d->pixelAspectRatio.denominator)) {
-                result.d->pixelAspectRatio = Fraction(1,1);
-            }
-
-            const char *colorMatrix = gst_video_parse_caps_color_matrix(caps);
-            if (!qstrcmp("hdtv", colorMatrix)) {
-                result.d->colorMatrix = GST_VIDEO_COLOR_MATRIX_BT709;
-            } else if (!qstrcmp("sdtv", colorMatrix)) {
-                result.d->colorMatrix = GST_VIDEO_COLOR_MATRIX_BT601;
-            } else {
-                result.d->colorMatrix = GST_VIDEO_COLOR_MATRIX_RGB;
-            }
+        if (gst_video_info_from_caps(&(result.d->videoInfo), caps)) {
+            // FIXME: Raise some kind of error
         }
     }
     return result;
 }
 
+/* FIXME: I'm not sure how to fix this.
 GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
 {
     GstCaps *caps = gst_video_format_new_template_caps(format);
@@ -64,16 +46,24 @@ GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
         break;
     }
 #endif
-
     return caps;
 }
+*/
 
 GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
                                const Fraction & framerate, const Fraction & pixelAspectRatio)
 {
-    GstCaps *caps = gst_video_format_new_caps(format, size.width(), size.height(),
-            framerate.numerator, framerate.denominator,
-            pixelAspectRatio.numerator, pixelAspectRatio.denominator);
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    gst_video_info_set_format(&videoInfo, format, size.width(), size.height());
+
+    videoInfo.fps_n = framerate.numerator;
+    videoInfo.fps_d = framerate.denominator;
+
+    videoInfo.par_n = pixelAspectRatio.numerator;
+    videoInfo.par_d = pixelAspectRatio.denominator;
+
+    GstCaps *caps = gst_video_info_to_caps(&videoInfo);
 
     // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
@@ -92,7 +82,30 @@ GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
     return caps;
 }
 
+inline GstVideoFormat BufferFormat::videoFormat() const
+{
+    return GST_VIDEO_INFO_FORMAT(&(d->videoInfo));
+}
+
+inline GstVideoColorMatrix BufferFormat::colorMatrix() const
+{
+    return d->videoInfo.colorimetry.matrix;
+}
+
+inline QSize BufferFormat::frameSize() const
+{
+    return QSize(GST_VIDEO_INFO_WIDTH(&(d->videoInfo)),
+                 GST_VIDEO_INFO_HEIGHT(&(d->videoInfo)));
+}
+
+Fraction BufferFormat::pixelAspectRatio() const
+{
+
+    return Fraction(GST_VIDEO_INFO_PAR_N(&(d->videoInfo)),
+                    GST_VIDEO_INFO_PAR_D(&(d->videoInfo)));
+}
+
 int BufferFormat::bytesPerLine(int component) const
 {
-    return gst_video_format_get_row_stride(videoFormat(), component, frameSize().width());
+    return GST_VIDEO_INFO_PLANE_STRIDE(&(d->videoInfo), component);
 }
