@@ -37,7 +37,7 @@ class QTGSTREAMER_EXPORT Buffer : public MiniObject
 public:
     static BufferPtr create(uint size);
 
-    quint8 * data() const;
+    //FIXME: quint8 * data() const;
     quint32 size() const;
 
     ClockTime decodingTimeStamp() const;

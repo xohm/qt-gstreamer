@@ -27,10 +27,13 @@ BufferPtr Buffer::create(uint size)
     return BufferPtr::wrap(gst_buffer_new_and_alloc(size), false);
 }
 
-quint8 * Buffer::data() const
-{
-    return GST_BUFFER_DATA(object<GstBuffer>());
-}
+// FIXME:  GST_BUFFER_DATA is replaced with gst_buffer_map & unmap.
+// this interface is more complex than this one and i'm not sure
+// how best to implement it.
+// quint8 * Buffer::data() const
+// {
+//     return GST_BUFFER_DATA(object<GstBuffer>());
+// }
 
 quint32 Buffer::size() const
 {
