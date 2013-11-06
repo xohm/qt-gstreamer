@@ -19,7 +19,6 @@
 
 #include <gst/gst.h>
 #include <gst/video/video.h>
-#include <gst/interfaces/colorbalance.h>
 #include <QtTest/QTest>
 #include <QtGui/QWidget>
 #include <QtGui/QPainter>

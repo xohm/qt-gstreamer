@@ -61,9 +61,6 @@ private:
     static void init(GTypeInstance *instance, gpointer g_class);
     static void finalize(GObject *object);
 
-    static void implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data);
-    static gboolean interface_supported(GstImplementsInterface *iface, GType type);
-
     static void colorbalance_init(GstColorBalanceClass *klass, gpointer data);
     static const GList *colorbalance_list_channels(GstColorBalance *balance);
     static void colorbalance_set_value(GstColorBalance *balance,
