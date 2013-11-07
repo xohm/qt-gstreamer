@@ -28,7 +28,6 @@ private Q_SLOTS:
     void bindingsTest();
     void copyTest();
     void valueTest();
-    void sharedStructureTest();
 };
 
 void StructureTest::bindingsTest()
@@ -104,28 +103,6 @@ void StructureTest::valueTest()
         QCOMPARE(s.value("foo").toInt(), 1);
     }
 }
-
-void StructureTest::sharedStructureTest()
-{
-    QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    {
-        QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
-        caps->setValue("width", 320);
-        caps->setValue("height", 240);
-        buffer->setCaps(caps);
-    }
-
-    QGst::StructurePtr structure = buffer->caps()->internalStructure(0);
-    QCOMPARE(structure->name(), QString("video/x-raw"));
-    QCOMPARE(structure->value("width").toInt(), 320);
-    QCOMPARE(structure->value("height").toInt(), 240);
-
-    QGst::Structure s = structure->copy();
-    QCOMPARE(s.name(), QString("video/x-raw"));
-    QCOMPARE(s.value("width").toInt(), 320);
-    QCOMPARE(s.value("height").toInt(), 240);
-}
-
 
 QTEST_APPLESS_MAIN(StructureTest)
 
