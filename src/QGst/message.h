@@ -17,6 +17,7 @@
 #ifndef QGST_MESSAGE_H
 #define QGST_MESSAGE_H
 
+#include "clocktime.h"
 #include "miniobject.h"
 #include "structure.h"
 #include "taglist.h"
@@ -53,7 +54,7 @@ public:
     QString typeName() const;
     MessageType type() const;
 
-    StructurePtr internalStructure();
+    const StructurePtr internalStructure();
 
     quint32 sequenceNumber() const;
     void setSequenceNumber(quint32 num);
@@ -240,10 +241,8 @@ class QTGSTREAMER_EXPORT DurationMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(Duration, Message)
 public:
-    static DurationMessagePtr create(const ObjectPtr & source, Format format, qint64 duration);
+    static DurationMessagePtr create(const ObjectPtr & source);
 
-    Format format() const;
-    qint64 duration() const;
 };
 
 /*! \headerfile message.h <QGst/Message>
@@ -265,7 +264,9 @@ class QTGSTREAMER_EXPORT AsyncDoneMessage : public Message
 {
     QGST_WRAPPER_FAKE_SUBCLASS(AsyncDone, Message)
 public:
-    static AsyncDoneMessagePtr create(const ObjectPtr & source);
+    static AsyncDoneMessagePtr create(const ObjectPtr & source, ClockTime running_time);
+
+    ClockTime running_time() const;
 };
 
 /*! \headerfile message.h <QGst/Message>

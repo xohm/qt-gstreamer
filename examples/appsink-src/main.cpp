@@ -42,7 +42,7 @@ protected:
 
     virtual QGst::FlowReturn newBuffer()
     {
-        m_src->pushBuffer(pullBuffer());
+        m_src->pushSample(pullBuffer());
         return QGst::FlowOk;
     }
 

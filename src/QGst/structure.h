@@ -85,6 +85,7 @@ public:
 
 private:
     friend class SharedStructure;
+    friend class Sample;
 
     struct Data;
 

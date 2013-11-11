@@ -36,18 +36,22 @@ public:
     static inline ElementPtr make(const QString & factoryName, const char *elementName = NULL);
 
     QGlib::Type elementType() const;
-    QString longName() const;
-    QString klass() const;
-    QString description() const;
-    QString author() const;
-    QString documentationUri() const;
-    QString iconName() const;
+    QString metadata(const QByteArray &) const;
+
+    static const QByteArray longName;
+    static const QByteArray klass;
+    static const QByteArray description;
+    static const QByteArray author;
+    static const QByteArray documentationUri;
+    static const QByteArray iconName;
 
     uint padTemplatesCount() const;
     int uriType() const;
     bool hasInterface(const char *interfaceName) const;
-    bool canSinkCaps(const CapsPtr & caps) const;
-    bool canSrcCaps(const CapsPtr & caps) const;
+    bool canSinkAllCaps(const CapsPtr & caps) const;
+    bool canSrcAllCaps(const CapsPtr & caps) const;
+    bool canSinkAnyCaps(const CapsPtr & caps) const;
+    bool canSrcAnyCaps(const CapsPtr & caps) const;
 
     ElementPtr create(const char *elementName = NULL) const;
 };

@@ -405,7 +405,7 @@ struct IfaceDynamicCastImpl<T, X,
 
         //Check that instanceType implements (isA) the interface
         //and if it does, return a wrapper for that interface.
-        if (Type::fromInstance(obj).isA(GetType<X>()))
+        if (QGlib::Type::fromInstance(obj).isA(GetType<X>()))
         {
             targetClass = dynamic_cast<X*>(Private::wrapInterface(GetType<X>(), obj));
             Q_ASSERT(targetClass);

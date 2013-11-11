@@ -27,6 +27,7 @@ namespace QGst {
 class QTGSTREAMER_EXPORT Pad : public Object
 {
     QGST_WRAPPER(Pad)
+
 public:
     static PadPtr create(PadDirection direction, const char *name = NULL);
 
@@ -59,7 +60,7 @@ public:
 
     bool isBlocked() const;
     bool isBlocking() const;
-    bool setBlocked(bool blocked);
+    //FIXME: bool setBlocked(bool blocked);
 
     bool query(const QueryPtr & query);
     bool sendEvent(const EventPtr & event);

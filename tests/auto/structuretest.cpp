@@ -20,6 +20,7 @@
 #include <QGst/Structure>
 #include <QGst/Buffer>
 #include <QGst/Caps>
+#include <QGst/Pad>
 
 class StructureTest : public QGstTest
 {
@@ -107,21 +108,21 @@ void StructureTest::valueTest()
 
 void StructureTest::sharedStructureTest()
 {
-    QGst::BufferPtr buffer = QGst::Buffer::create(10);
+    QGst::PadPtr pad = QGst::Pad::create(QGst::PadSrc);
     {
-        QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+        QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
         caps->setValue("width", 320);
         caps->setValue("height", 240);
-        buffer->setCaps(caps);
+        pad->setCaps(caps);
     }
 
-    QGst::StructurePtr structure = buffer->caps()->internalStructure(0);
-    QCOMPARE(structure->name(), QString("video/x-raw-yuv"));
+    QGst::StructurePtr structure = pad->caps()->internalStructure(0);
+    QCOMPARE(structure->name(), QString("video/x-raw"));
     QCOMPARE(structure->value("width").toInt(), 320);
     QCOMPARE(structure->value("height").toInt(), 240);
 
     QGst::Structure s = structure->copy();
-    QCOMPARE(s.name(), QString("video/x-raw-yuv"));
+    QCOMPARE(s.name(), QString("video/x-raw"));
     QCOMPARE(s.value("width").toInt(), 320);
     QCOMPARE(s.value("height").toInt(), 240);
 }

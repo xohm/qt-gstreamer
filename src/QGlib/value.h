@@ -20,8 +20,8 @@
 #define QGLIB_VALUE_H
 
 #include "global.h"
-#include "type.h"
 #include "refpointer.h"
+#include "type.h"
 #include "error.h"
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits.hpp>

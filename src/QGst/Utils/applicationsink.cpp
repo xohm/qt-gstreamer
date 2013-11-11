@@ -40,13 +40,11 @@ public:
 private:
     static void eos(GstAppSink *sink, gpointer user_data);
     static GstFlowReturn new_preroll(GstAppSink *sink, gpointer user_data);
-    static GstFlowReturn new_buffer(GstAppSink *sink, gpointer user_data);
-    static GstFlowReturn new_buffer_list(GstAppSink *sink, gpointer user_data);
+    static GstFlowReturn new_sample(GstAppSink *sink, gpointer user_data);
 
     static void eos_noop(GstAppSink*, gpointer) {}
     static GstFlowReturn new_preroll_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
-    static GstFlowReturn new_buffer_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
-    static GstFlowReturn new_buffer_list_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
+    static GstFlowReturn new_sample_noop(GstAppSink*, gpointer) { return GST_FLOW_OK; }
 };
 
 void ApplicationSink::Priv::lazyConstruct(ApplicationSink *self)
@@ -64,12 +62,11 @@ void ApplicationSink::Priv::setCallbacks(ApplicationSink *self)
 {
     if (m_appsink) {
         if (self) {
-            static GstAppSinkCallbacks callbacks = { &eos, &new_preroll,
-                                                     &new_buffer, &new_buffer_list };
+            static GstAppSinkCallbacks callbacks = { &eos, &new_preroll, &new_sample, NULL };
             gst_app_sink_set_callbacks(appSink(), &callbacks, self, NULL);
         } else {
             static GstAppSinkCallbacks callbacks = { &eos_noop, &new_preroll_noop,
-                                                     &new_buffer_noop, &new_buffer_list_noop };
+                                                     &new_sample_noop, NULL };
             gst_app_sink_set_callbacks(appSink(), &callbacks, NULL, NULL);
         }
     }
@@ -87,16 +84,10 @@ GstFlowReturn ApplicationSink::Priv::new_preroll(GstAppSink* sink, gpointer user
     return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newPreroll());
 }
 
-GstFlowReturn ApplicationSink::Priv::new_buffer(GstAppSink* sink, gpointer user_data)
+GstFlowReturn ApplicationSink::Priv::new_sample(GstAppSink* sink, gpointer user_data)
 {
     Q_UNUSED(sink);
-    return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newBuffer());
-}
-
-GstFlowReturn ApplicationSink::Priv::new_buffer_list(GstAppSink* sink, gpointer user_data)
-{
-    Q_UNUSED(sink);
-    return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newBufferList());
+    return static_cast<GstFlowReturn>(static_cast<ApplicationSink*>(user_data)->newSample());
 }
 
 #endif //DOXYGEN_RUN
@@ -175,29 +166,20 @@ void ApplicationSink::enableDrop(bool enable)
     }
 }
 
-BufferPtr ApplicationSink::pullPreroll()
+SamplePtr ApplicationSink::pullPreroll()
 {
-    BufferPtr buf;
+    SamplePtr buf;
     if (d->appSink()) {
-        buf = BufferPtr::wrap(gst_app_sink_pull_preroll(d->appSink()), false);
+        buf = SamplePtr::wrap(gst_app_sink_pull_preroll(d->appSink()), false);
     }
     return buf;
 }
 
-BufferPtr ApplicationSink::pullBuffer()
+SamplePtr ApplicationSink::pullSample()
 {
-    BufferPtr buf;
+    SamplePtr buf;
     if (d->appSink()) {
-        buf = BufferPtr::wrap(gst_app_sink_pull_buffer(d->appSink()), false);
-    }
-    return buf;
-}
-
-BufferListPtr ApplicationSink::pullBufferList()
-{
-    BufferListPtr buf;
-    if (d->appSink()) {
-        buf = BufferListPtr::wrap(gst_app_sink_pull_buffer_list(d->appSink()), false);
+        buf = SamplePtr::wrap(gst_app_sink_pull_sample(d->appSink()), false);
     }
     return buf;
 }
@@ -211,16 +193,10 @@ FlowReturn ApplicationSink::newPreroll()
     return FlowOk;
 }
 
-FlowReturn ApplicationSink::newBuffer()
+FlowReturn ApplicationSink::newSample()
 {
     return FlowOk;
 }
-
-FlowReturn ApplicationSink::newBufferList()
-{
-    return FlowOk;
-}
-
 
 } //namespace Utils
 } //namespace QGst

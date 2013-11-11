@@ -19,7 +19,7 @@ set(QtGStreamer_SRCS
     parse.cpp
     urihandler.cpp
     videoorientation.cpp
-    videooverlay.cpp
+#    videooverlay.cpp
     streamvolume.cpp
     colorbalance.cpp
     query.cpp
@@ -28,6 +28,7 @@ set(QtGStreamer_SRCS
     event.cpp
     clocktime.cpp
     taglist.cpp
+    sample.cpp
     bufferlist.cpp
     discoverer.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/gen.cpp

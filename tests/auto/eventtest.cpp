@@ -55,7 +55,6 @@ void EventTest::baseTest()
     QCOMPARE(ss->value("myfield").get<int>(), 365);
 
     QVERIFY(evt->timestamp());
-    QVERIFY(evt->source().isNull());
 
     evt->setSequenceNumber(123445);
     QCOMPARE(evt->sequenceNumber(), static_cast<quint32>(123445));
@@ -100,12 +99,12 @@ void EventTest::eosTest()
 
 void EventTest::newSegmentTest()
 {
-    QGst::NewSegmentEventPtr evt = QGst::NewSegmentEvent::create(true, 1.0, 0.5, QGst::FormatTime, 12345,
-                                                       234567, 12346);
+    QGst::NewSegmentEventPtr evt = QGst::NewSegmentEvent::create(QGst::SegmentFlag::Segment, 100000.0, 0.5, QGst::FormatTime, 1, 2, 12345, 234567, 345678, 456789, 56789);
+
     QVERIFY(evt->type()==QGst::EventNewSegment);
     QCOMPARE(evt->typeName(), QString("newsegment"));
 
-    QVERIFY(evt->isUpdate());
+    QCOMPARE(evt->flags(), QGst::SegmentFlag::Segment);
     QCOMPARE(evt->rate(), 1.0);
     QCOMPARE(evt->appliedRate(), 0.5);
     QVERIFY(evt->format() == QGst::FormatTime);
@@ -119,7 +118,7 @@ void EventTest::newSegmentTest()
 void EventTest::sinkMessageTest()
 {
     QGst::MessagePtr msg = QGst::BufferingMessage::create(QGst::ObjectPtr(), 90);
-    QGst::SinkMessageEventPtr evt = QGst::SinkMessageEvent::create(msg);
+    QGst::SinkMessageEventPtr evt = QGst::SinkMessageEvent::create("sink-message", msg);
     QVERIFY(evt->type()==QGst::EventSinkMessage);
     QCOMPARE(evt->typeName(), QString("sink-message"));
 
@@ -131,8 +130,8 @@ void EventTest::sinkMessageTest()
 
 void EventTest::qosTest()
 {
-    QGst::QosEventPtr evt = QGst::QosEvent::create(123.4, 23455, 98765432);
-    QVERIFY(evt->type()==QGst::EventQos);
+    QGst::QosEventPtr evt = QGst::QosEvent::create(QGst::QOSType::QosUnderflow, 123.4, 23455, 98765432);
+    QVERIFY(evt->type()==QGst::QOSType::QosUnderflow);
     QCOMPARE(evt->typeName(), QString("qos"));
 
     QCOMPARE(evt->proportion(), 123.4);
@@ -181,7 +180,7 @@ void EventTest::latencyTest()
 
 void EventTest::stepTest()
 {
-    QGst::StepEventPtr evt = QGst::StepEvent::create(QGst::FormatTime, 100000, 0.5, true, false);
+    QGst::StepEventPtr evt = QGst::StepEvent::create(QGst::FormatTime, 100000, 0.5, false, false);
     QVERIFY(evt->type()==QGst::EventStep);
     QCOMPARE(evt->typeName(), QString("step"));
 

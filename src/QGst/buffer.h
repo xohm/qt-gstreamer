@@ -40,11 +40,9 @@ public:
     quint8 * data() const;
     quint32 size() const;
 
-    ClockTime timeStamp() const;
+    ClockTime decodingTimeStamp() const;
+    ClockTime presentationTimeStamp() const;
     ClockTime duration() const;
-
-    CapsPtr caps() const;
-    void setCaps(const CapsPtr & caps);
 
     quint64 offset() const;
     quint64 offsetEnd() const;

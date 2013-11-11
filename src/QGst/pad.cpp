@@ -111,10 +111,11 @@ bool Pad::isBlocking() const
     return gst_pad_is_blocking(object<GstPad>());
 }
 
-bool Pad::setBlocked(bool blocked)
-{
-    return gst_pad_set_blocked(object<GstPad>(), blocked);
-}
+// FIXME: setBlocked should be handled by a message.
+// bool Pad::setBlocked(bool blocked)
+// {
+//     return gst_pad_set_blocked(object<GstPad>(), blocked);
+// }
 
 bool Pad::query(const QueryPtr & query)
 {

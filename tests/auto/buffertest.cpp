@@ -17,6 +17,7 @@
 */
 #include "qgsttest.h"
 #include <QGst/Buffer>
+#include <QGst/Pad>
 #include <QGst/Caps>
 
 class BufferTest : public QGstTest
@@ -34,19 +35,22 @@ void BufferTest::simpleTest()
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
 
     QCOMPARE(buffer->size(), (quint32) 10);
-    QVERIFY(buffer->data());
+    QVERIFY2(false, "Implement GstMemory, GstMemInfo");
+    //FIXME: QVERIFY(buffer->data());
 }
 
+//FIXME: This test needs to go somewhere else.
+//FIXME: caps were moved from buffers to pads...
 void BufferTest::capsTest()
 {
-    QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw-yuv");
+    QGst::PadPtr pad = QGst::Pad::create(QGst::PadSrc);
+    QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
 
-    buffer->setCaps(caps);
+    pad->setCaps(caps);
 
-    QGst::CapsPtr caps2 = buffer->caps();
+    QGst::CapsPtr caps2 = pad->caps();
 
     QVERIFY(caps->equals(caps2));
 }
@@ -54,26 +58,27 @@ void BufferTest::capsTest()
 void BufferTest::flagsTest()
 {
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::BufferFlags flags(QGst::BufferFlagReadOnly & QGst::BufferFlagDiscont);
+    QGst::BufferFlags flags(QGst::BufferFlagLive & QGst::BufferFlagDiscont);
     buffer->setFlags(flags);
 
     QGst::BufferFlags flags2 = buffer->flags();
     QCOMPARE(flags, flags2);
 
-    QGst::BufferFlags flags3(QGst::BufferFlagReadOnly);
+    QGst::BufferFlags flags3(QGst::BufferFlagLive);
     QVERIFY(flags2!=flags3);
 }
 
 void BufferTest::copyTest()
 {
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
-    QGst::BufferFlags flags(QGst::BufferFlagReadOnly & QGst::BufferFlagDiscont);
+    QGst::BufferFlags flags(QGst::BufferFlagLive & QGst::BufferFlagDiscont);
     buffer->setFlags(flags);
 
     QGst::BufferPtr buffer2 = buffer->copy();
 
     QCOMPARE(buffer->size(), buffer2->size());
-    QCOMPARE(buffer->timeStamp(), buffer2->timeStamp());
+    QCOMPARE(buffer->decodingTimeStamp(), buffer2->decodingTimeStamp());
+    QCOMPARE(buffer->presentationTimeStamp(), buffer2->presentationTimeStamp());
     QCOMPARE(buffer->duration(), buffer2->duration());
 
     QGst::BufferFlags flags2(QGst::BufferFlagDiscont);

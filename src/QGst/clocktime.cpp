@@ -18,6 +18,7 @@
 #include "clocktime.h"
 
 #include <QtCore/QTime>
+#include <gst/gstminiobject.h>
 #include <gst/gstclock.h>
 
 namespace QGst {

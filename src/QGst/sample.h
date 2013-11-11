@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2010  Collabora Multimedia.
-      @author Mauricio Piacentini <mauricio.piacentini@collabora.co.uk>
+    Copyright (C) 2013  Diane Trout
+      @author Diane Trout <diane@ghic.org>
 
     This library is free software; you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published
@@ -15,36 +15,32 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "clock.h"
+#ifndef QGST_SAMPLE_H
+#define QGST_SAMPLE_H
 
-#include <QtCore/QTime>
-#include <glib.h>
-#include <gst/gstconfig.h>
-#include <gst/gstclock.h>
-#include <gst/gstsystemclock.h>
+#include "object.h"
 
 namespace QGst {
 
-ClockPtr Clock::systemClock()
+    /*! \headerfile buffer.h <QGst/Sample>
+     * \brief Wrapper class for GstSample
+     *
+     * Samples are small objects containg data, a type, timing and extra arbitrary information.
+     *
+     */
+class QTGSTREAMER_EXPORT Sample : public Object
 {
-    return ClockPtr::wrap(gst_system_clock_obtain(), false);
-}
+    QGST_WRAPPER(Sample)
+public:
+    static SamplePtr create(BufferPtr buffer, CapsPtr caps, void *segment, Structure info);
 
-ClockTime Clock::clockTime() const
-{
-    GstClockTime t = gst_clock_get_time(object<GstClock>());
-    return t;
-}
+    BufferPtr buffer();
+    CapsPtr caps();
+    //SegmentPtr segment();
+    const Structure info();
+};
+} //namespace QGst
 
-ClockTime Clock::resolution() const
-{
-    GstClockTime t = gst_clock_get_resolution(object<GstClock>());
-    return t;
-}
+QGST_REGISTER_TYPE(QGst::Sample)
 
-QTime Clock::time() const
-{
-    return clockTime().toTime();
-}
-
-}
+#endif

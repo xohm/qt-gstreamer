@@ -24,38 +24,35 @@ namespace QGst {
 
 BufferPtr Buffer::create(uint size)
 {
-    return BufferPtr::wrap(gst_buffer_try_new_and_alloc(size), false);
+    return BufferPtr::wrap(gst_buffer_new_and_alloc(size), false);
 }
 
-quint8 * Buffer::data() const
-{
-    return GST_BUFFER_DATA(object<GstBuffer>());
-}
+// FIXME:  GST_BUFFER_DATA is replaced with gst_buffer_map & unmap.
+// this interface is more complex than this one and i'm not sure
+// how best to implement it.
+// quint8 * Buffer::data() const
+// {
+//     return GST_BUFFER_DATA(object<GstBuffer>());
+// }
 
 quint32 Buffer::size() const
 {
-    return GST_BUFFER_SIZE(object<GstBuffer>());
+    return gst_buffer_get_size(object<GstBuffer>());
 }
 
-ClockTime Buffer::timeStamp() const
+ClockTime Buffer::decodingTimeStamp() const
 {
-    return GST_BUFFER_TIMESTAMP(object<GstBuffer>());
+    return GST_BUFFER_DTS(object<GstBuffer>());
+}
+
+ClockTime Buffer::presentationTimeStamp() const
+{
+    return GST_BUFFER_PTS(object<GstBuffer>());
 }
 
 ClockTime Buffer::duration() const
 {
     return GST_BUFFER_DURATION(object<GstBuffer>());
-}
-
-CapsPtr Buffer::caps() const
-{
-    //wrap increasing the refcount
-    return QGst::CapsPtr::wrap(GST_BUFFER_CAPS(object<GstBuffer>()));
-}
-
-void Buffer::setCaps(const CapsPtr & caps)
-{
-    gst_buffer_set_caps(object<GstBuffer>(), caps);
 }
 
 quint64 Buffer::offset() const

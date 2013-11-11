@@ -24,7 +24,8 @@
 
 namespace QGst {
     enum MiniObjectFlag {
-        MiniObjectFlagReadonly = (1<<0),
+        MiniObjectFlagLockable = (1<<0),
+        MiniObjectFlagLockReadonly = (1<<1),
         /*padding*/
         MiniObjectFlagLast = (1<<4)
     };
@@ -36,8 +37,9 @@ QGST_REGISTER_TYPE(QGst::MiniObjectFlags);
 
 namespace QGst {
     enum ObjectFlag {
-        ObjectDisposing = (1<<0),
-        ObjectFloating = (1<<1),
+	// Appear to have been removed
+        //ObjectDisposing = (1<<0),
+        //ObjectFloating = (1<<1),
         /*padding*/
         ObjectFlagLast = (1<<4)
     };
@@ -46,6 +48,15 @@ namespace QGst {
 }
 QGST_REGISTER_TYPE(QGst::ObjectFlags);
 
+namespace QGst {
+    enum QOSType {
+        //codegen: QosOverflow=QOS_TYPE_OVERFLOW, QosUnderflow=QOS_TYPE_UNDERFLOW, QosThrottle=QOS_TYPE_THROTTLE
+	QosOverflow = 0,
+	QosUnderflow = 1,
+	QosThrottle = 2
+    };
+}
+QGST_REGISTER_TYPE(QGst::QOSType); //codegen: GType=GST_TYPE_QOS_TYPE
 
 namespace QGst {
     enum State {
@@ -92,14 +103,19 @@ QGST_REGISTER_TYPE(QGst::PadDirection)
 
 namespace QGst {
     enum PadFlag {
-        //codegen: PadInGetCaps=PAD_IN_GETCAPS, PadInSetCaps=PAD_IN_SETCAPS
-        PadBlocked = (ObjectFlagLast << 0),
-        PadFlushing = (ObjectFlagLast << 1),
-        PadInGetCaps = (ObjectFlagLast << 2),
-        PadInSetCaps = (ObjectFlagLast << 3),
-        PadBlocking = (ObjectFlagLast << 4),
+        PadFlagBlocked = (ObjectFlagLast << 0),
+        PadFlagFlushing = (ObjectFlagLast << 1),
+        PadFlagEos = (ObjectFlagLast << 2),
+        PadFlagBlocking = (ObjectFlagLast << 3),
+	PadFlagNeedParent = (ObjectFlagLast << 4),
+	PadFlagNeedReconfigure = (ObjectFlagLast << 5),
+	PadFlagPendingEvents = (ObjectFlagLast << 6),
+	PadFlagFixedCaps = (ObjectFlagLast << 7),
+	PadFlagProxyCaps = (ObjectFlagLast << 8),
+	PadFlagProxyAllocation = (ObjectFlagLast << 9),
+	PadFlagProxyScheduling = (ObjectFlagLast << 10),
         /*padding*/
-        PadFlagLast = (ObjectFlagLast << 8)
+        PadFlagLast = (ObjectFlagLast << 16)
     };
     Q_DECLARE_FLAGS(PadFlags, PadFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(PadFlags);
@@ -122,28 +138,32 @@ QGST_REGISTER_TYPE(QGst::PadLinkReturn)
 
 namespace QGst {
     enum FlowReturn {
+	//codegen: FlowCustomSuccess2=FLOW_CUSTOM_SUCCESS_2, FlowCustomSuccess1=FLOW_CUSTOM_SUCCESS_1, FlowCustomError1=FLOW_CUSTOM_ERROR_1, FlowCustomError2=FLOW_CUSTOM_ERROR_2
+	FlowCustomSuccess2 = 102,
+	FlowCustomSuccess1 = 101,
         FlowCustomSuccess = 100,
-        FlowResend = 1,
         FlowOk = 0,
         FlowNotLinked = -1,
-        FlowWrongState = -2,
-        FlowUnexpected = -3,
+        FlowFlushing = -2,
+	FlowEos = -3,
         FlowNotNegotiated = -4,
         FlowError = -5,
         FlowNotSupported = -6,
-        FlowCustomError = -100
+        FlowCustomError = -100,
+        FlowCustomError1 = -101,
+        FlowCustomError2 = -102
     };
 }
 QGST_REGISTER_TYPE(QGst::FlowReturn)
 
 namespace QGst {
-    enum ActivateMode {
-        ActivateNone,
-        ActivatePush,
-        ActivatePull
+    enum PadMode {
+        PadModeNone,
+        PadModePush,
+        PadModePull
     };
 }
-QGST_REGISTER_TYPE(QGst::ActivateMode)
+QGST_REGISTER_TYPE(QGst::PadMode)
 
 
 namespace QGst {
@@ -256,7 +276,7 @@ namespace QGst {
         StreamVolumeFormatDb
     };
 }
-QGST_REGISTER_TYPE(QGst::StreamVolumeFormat)
+QGST_REGISTER_TYPE(QGst::StreamVolumeFormat) //codegen: GType=G_TYPE_ENUM
 
 namespace QGst {
     enum ColorBalanceType {
@@ -267,42 +287,61 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::ColorBalanceType)
 
 namespace QGst {
+    enum QueryTypeFlag {
+        QueryTypeUpstream = 1 << 0,
+        QueryTypeDownstream = 1 << 1,
+        QueryTypeSerialized = 1 << 2,
+        QueryTypeBoth = (QueryTypeUpstream | QueryTypeDownstream)
+    };
+    Q_DECLARE_FLAGS(QueryTypeFlags, QueryTypeFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(QueryTypeFlags)
+}
+QGST_REGISTER_TYPE(QGst::QueryTypeFlags)
+
+namespace QGst {
+    static const int GstQueryNumShift = 8;
     enum QueryType {
-        QueryNone = 0,
-        QueryPosition,
-        QueryDuration,
-        QueryLatency,
-        QueryJitter,
-        QueryRate,
-        QuerySeeking,
-        QuerySegment,
-        QueryConvert,
-        QueryFormats,
-        QueryBuffering,
-        QueryCustom,
-        QueryUri
+        QueryUnknown = 0,
+        QueryPosition = (10 << GstQueryNumShift) | QueryTypeBoth,
+        QueryDuration = (20 << GstQueryNumShift) | QueryTypeBoth,
+        QueryLatency = (30 << GstQueryNumShift) | QueryTypeBoth,
+        QueryJitter = (40 << GstQueryNumShift) | QueryTypeBoth,
+        QueryRate = (50 << GstQueryNumShift) | QueryTypeBoth,
+        QuerySeeking = (60 << GstQueryNumShift) | QueryTypeBoth,
+        QuerySegment = (70 << GstQueryNumShift) | QueryTypeBoth,
+        QueryConvert = (80 << GstQueryNumShift) | QueryTypeBoth,
+        QueryFormats = (90 << GstQueryNumShift) | QueryTypeBoth,
+        QueryBuffering = (110 << GstQueryNumShift) | QueryTypeBoth,
+        QueryCustom = (120 << GstQueryNumShift) | QueryTypeBoth,
+        QueryUri = (130 << GstQueryNumShift) | QueryTypeBoth,
+        QueryAllocation = (140 << GstQueryNumShift) | QueryTypeDownstream | QueryTypeSerialized,
+        QueryScheduling = (150 << GstQueryNumShift) | QueryTypeUpstream,
+        QueryAcceptCaps = (160 << GstQueryNumShift) | QueryTypeBoth,
+        QueryCaps = (170 << GstQueryNumShift) | QueryTypeBoth,
+        QueryDrain = (180 << GstQueryNumShift) | QueryTypeDownstream | QueryTypeSerialized,
+        QueryContext = (190 << GstQueryNumShift) | QueryTypeBoth
     };
 }
 QGST_REGISTER_TYPE(QGst::QueryType)
 
 namespace QGst {
     enum BufferFlag {
-        //codegen: BufferFlagReadOnly=BUFFER_FLAG_READONLY
-        BufferFlagReadOnly = MiniObjectFlagReadonly,
-        BufferFlagPreroll  = (MiniObjectFlagLast << 0),
-        BufferFlagDiscont = (MiniObjectFlagLast << 1),
-        BufferFlagInCaps = (MiniObjectFlagLast << 2),
-        BufferFlagGap = (MiniObjectFlagLast << 3),
-        BufferFlagDeltaUnit = (MiniObjectFlagLast << 4),
-        BufferFlagMedia1 = (MiniObjectFlagLast << 5),
-        BufferFlagMedia2 = (MiniObjectFlagLast << 6),
-        BufferFlagMedia3 = (MiniObjectFlagLast << 7),
-        BufferFlagLast = (MiniObjectFlagLast << 8)
+        BufferFlagLive = (MiniObjectFlagLast <<0),
+        BufferFlagDecodeOnly  = (MiniObjectFlagLast << 1),
+        BufferFlagDiscont = (MiniObjectFlagLast << 2),
+        BufferFlagResync = (MiniObjectFlagLast << 3),
+        BufferFlagCorrupted = (MiniObjectFlagLast << 4),
+        BufferFlagMarker = (MiniObjectFlagLast << 5),
+        BufferFlagHeader = (MiniObjectFlagLast << 6),
+        BufferFlagGap = (MiniObjectFlagLast << 7),
+        BufferFlagDroppable = (MiniObjectFlagLast << 8),
+        BufferFlagDeltaUnit = (MiniObjectFlagLast << 9),
+        BufferFlagLast = (MiniObjectFlagLast << 16)
     };
     Q_DECLARE_FLAGS(BufferFlags, BufferFlag);
     Q_DECLARE_OPERATORS_FOR_FLAGS(BufferFlags)
 }
-QGST_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAG
+QGST_REGISTER_TYPE(QGst::BufferFlags) //codegen: GType=GST_TYPE_BUFFER_FLAGS
 
 
 namespace QGst {
@@ -310,6 +349,8 @@ namespace QGst {
         EventTypeUpstream = 1 << 0,
         EventTypeDownstream = 1 << 1,
         EventTypeSerialized = 1 << 2,
+        EventTypeSticky = 1 << 3,
+        EventTypeStickyMulti = 1 << 4,
         EventTypeBoth = (EventTypeUpstream | EventTypeDownstream)
     };
     Q_DECLARE_FLAGS(EventTypeFlags, EventTypeFlag);
@@ -318,26 +359,43 @@ namespace QGst {
 QGST_REGISTER_TYPE(QGst::EventTypeFlags)
 
 namespace QGst {
+    static const int GstEventNumShift = 8;
     enum EventType {
-        //codegen: EventNewSegment=EVENT_NEWSEGMENT, EventBufferSize=EVENT_BUFFERSIZE
-        EventUnknown = (0 << 4),
-        EventFlushStart = (1 << 4) | EventTypeBoth,
-        EventFlushStop = (2 << 4) | EventTypeBoth | EventTypeSerialized,
-        EventEos = (5 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventNewSegment = (6 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventTag = (7 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventBufferSize = (8 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventSinkMessage = (9 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventQos = (15 << 4) | EventTypeUpstream,
-        EventSeek = (16 << 4) | EventTypeUpstream,
-        EventNavigation = (17 << 4) | EventTypeUpstream,
-        EventLatency = (18 << 4) | EventTypeUpstream,
-        EventStep = (19 << 4) | EventTypeUpstream,
-        EventCustomUpstream = (32 << 4) | EventTypeUpstream,
-        EventCustomDownstream = (32 << 4) | EventTypeDownstream | EventTypeSerialized,
-        EventCustomDownstreamOob = (32 << 4) | EventTypeDownstream,
-        EventCustomBoth = (32 << 4) | EventTypeBoth | EventTypeSerialized,
-        EventCustomBothOob = (32 << 4) | EventTypeBoth
+        //codegen: EventBufferSize=EVENT_BUFFERSIZE, EventNewSegment=EVENT_SEGMENT
+        EventUnknown = (0 << GstEventNumShift),
+        EventFlushStart = (10 << GstEventNumShift) | EventTypeBoth,
+        EventFlushStop = (20 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
+
+        /* downstream */
+        EventStreamStart = (40 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventCaps = (50 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventNewSegment = (70 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventTag = (80 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventBufferSize = (90 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventSinkMessage = (100 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventEos = (110 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky,
+        EventToc = (120 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+
+        /* non sticky downstream */
+        EventSegmentDone = (150 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+        EventGap = (160 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+
+        /* upstream events */
+        EventQos = (190 << GstEventNumShift) | EventTypeUpstream,
+        EventSeek = (200 << GstEventNumShift) | EventTypeUpstream,
+        EventNavigation = (210 << GstEventNumShift) | EventTypeUpstream,
+        EventLatency = (220 << GstEventNumShift) | EventTypeUpstream,
+        EventStep = (230 << GstEventNumShift) | EventTypeUpstream,
+        EventReconfigure = (240 << GstEventNumShift ) | EventTypeUpstream,
+        EventTocSelect = (250 << GstEventNumShift) | EventTypeUpstream,
+
+        /* custom events */
+        EventCustomUpstream = (270 << GstEventNumShift) | EventTypeUpstream,
+        EventCustomDownstream = (280 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized,
+        EventCustomDownstreamOob = (290 << GstEventNumShift) | EventTypeDownstream,
+        EventCustomDownstreamSticky = (300 << GstEventNumShift) | EventTypeDownstream | EventTypeSerialized | EventTypeSticky | EventTypeStickyMulti,
+        EventCustomBoth = (310 << GstEventNumShift) | EventTypeBoth | EventTypeSerialized,
+        EventCustomBothOob = (320 << GstEventNumShift) | EventTypeBoth
     };
 }
 QGST_REGISTER_TYPE(QGst::EventType)
@@ -359,12 +417,24 @@ QGST_REGISTER_TYPE(QGst::SeekFlags)
 namespace QGst {
     enum SeekType {
         SeekTypeNone = 0,
-        SeekTypeCur = 1,
-        SeekTypeSet = 2,
-        SeekTypeEnd = 3
+        SeekTypeSet = 1,
+        SeekTypeEnd = 2
     };
 }
 QGST_REGISTER_TYPE(QGst::SeekType)
+
+namespace QGst {
+    enum SegmentFlag {
+	//codegen: None=SEGMENT_FLAG_NONE, Reset=SEGMENT_FLAG_RESET, Skip=SEGMENT_FLAG_SKIP, Segment=SEGMENT_FLAG_SEGMENT
+	None = SeekFlagNone,
+	Reset = SeekFlagFlush,
+	Skip = SeekFlagSkip,
+	Segment = SeekFlagSegment
+    };
+    Q_DECLARE_FLAGS(SegmentFlags, SegmentFlag);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(SegmentFlags);
+}
+QGST_REGISTER_TYPE(QGst::SegmentFlags);
 
 namespace QGst {
     enum TagMergeMode {

@@ -238,14 +238,14 @@ void MessageTest::segmentDoneMessageTest()
 
 void MessageTest::durationMessageTest()
 {
-    QGst::DurationMessagePtr msg = QGst::DurationMessage::create(QGst::ObjectPtr(),
-                                                                       QGst::FormatBytes, 1456788);
-
+    QGst::DurationMessagePtr msg = QGst::DurationMessage::create(QGst::ObjectPtr());
+    // FIXME: where does this go now? QGst::FormatBytes, 1456788
     QVERIFY(msg->type()==QGst::MessageDuration);
     QCOMPARE(msg->typeName(), QString("duration"));
 
-    QVERIFY(msg->format()==QGst::FormatBytes);
-    QCOMPARE(msg->duration(), static_cast<qint64>(1456788));
+    // FIXME: format removed
+    // QVERIFY(msg->format()==QGst::FormatBytes);
+    // QCOMPARE(msg->duration(), static_cast<qint64>(1456788));
 }
 
 void MessageTest::latencyMessageTest()
@@ -258,10 +258,12 @@ void MessageTest::latencyMessageTest()
 
 void MessageTest::asyncDoneMessageTest()
 {
-    QGst::AsyncDoneMessagePtr msg = QGst::AsyncDoneMessage::create(QGst::ObjectPtr());
+    QGst::ClockTime time = QGst::ClockTime::fromTime(QTime(17,0));
+    QGst::AsyncDoneMessagePtr msg = QGst::AsyncDoneMessage::create(QGst::ObjectPtr(), time);
 
     QVERIFY(msg->type()==QGst::MessageAsyncDone);
     QCOMPARE(msg->typeName(), QString("async-done"));
+    QCOMPARE(msg->running_time().toTime(), QTime(17,0));
 }
 
 void MessageTest::requestStateMessageTest()

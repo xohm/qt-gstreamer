@@ -26,7 +26,6 @@
 
 namespace QGlib {
 
-GetTypeImpl<QDate>::operator Type() { return GST_TYPE_DATE; }
 GetTypeImpl<QDateTime>::operator Type() { return GST_TYPE_DATE_TIME; }
 
 } //namespace QGlib
@@ -36,36 +35,38 @@ namespace Private {
 
 void registerValueVTables()
 {
-    struct ValueVTable_MiniObject
-    {
-        static void get(const QGlib::Value & value, void *data)
-        {
-            *reinterpret_cast<GstMiniObject**>(data) = gst_value_get_mini_object(value);
-        };
+    // FIXME: What should we do with MiniObject Handling
+    // struct ValueVTable_MiniObject
+    // {
+    //     static void get(const QGlib::Value & value, void *data)
+    //     {
+    //         *reinterpret_cast<GstMiniObject**>(data) = gst_value_get_mini_object(value);
+    //     };
 
-        static void set(QGlib::Value & value, const void *data)
-        {
-            gst_value_set_mini_object(value, *reinterpret_cast<GstMiniObject* const *>(data));
-        };
-    };
-    QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
-            QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
+    //     static void set(QGlib::Value & value, const void *data)
+    //     {
+    //         gst_value_set_mini_object(value, *reinterpret_cast<GstMiniObject* const *>(data));
+    //     };
+    // };
+    // QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
+    //         QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
 
 
-    struct ValueVTable_Fourcc
-    {
-        static void get(const QGlib::Value & value, void *data)
-        {
-            reinterpret_cast<Fourcc*>(data)->value.as_integer = gst_value_get_fourcc(value);
-        };
+    // FIXME: What should we do with Fourcc?
+    // struct ValueVTable_Fourcc
+    // {
+    //     static void get(const QGlib::Value & value, void *data)
+    //     {
+    //         reinterpret_cast<Fourcc*>(data)->value.as_integer = gst_value_get_fourcc(value);
+    //     };
 
-        static void set(QGlib::Value & value, const void *data)
-        {
-            gst_value_set_fourcc(value, reinterpret_cast<Fourcc const *>(data)->value.as_integer);
-        };
-    };
-    QGlib::Value::registerValueVTable(QGlib::GetType<Fourcc>(),
-            QGlib::ValueVTable(ValueVTable_Fourcc::set, ValueVTable_Fourcc::get));
+    //     static void set(QGlib::Value & value, const void *data)
+    //     {
+    //         gst_value_set_fourcc(value, reinterpret_cast<Fourcc const *>(data)->value.as_integer);
+    //     };
+    // };
+    // QGlib::Value::registerValueVTable(QGlib::GetType<Fourcc>(),
+    //        QGlib::ValueVTable(ValueVTable_Fourcc::set, ValueVTable_Fourcc::get));
 
 
     struct ValueVTable_Fraction
@@ -179,29 +180,6 @@ void registerValueVTables()
     };
     QGlib::Value::registerValueVTable(QGlib::GetType<Structure>(),
             QGlib::ValueVTable(ValueVTable_Structure::set, ValueVTable_Structure::get));
-
-    struct ValueVTable_QDate
-    {
-        static void get(const QGlib::Value & value, void *data)
-        {
-            const GDate *gdate = gst_value_get_date(value);
-            *reinterpret_cast<QDate*>(data) = QDate(g_date_get_year(gdate),
-                                                    g_date_get_month(gdate),
-                                                    g_date_get_day(gdate));
-        }
-
-        static void set(QGlib::Value & value, const void *data)
-        {
-            const QDate *qdate = reinterpret_cast<QDate const *>(data);
-            GDate *gdate = g_date_new_dmy(qdate->day(),
-                                          static_cast<GDateMonth>(qdate->month()),
-                                          qdate->year());
-            gst_value_set_date(value, gdate);
-            g_date_free(gdate);
-        }
-    };
-    QGlib::Value::registerValueVTable(QGlib::GetType<QDate>(),
-            QGlib::ValueVTable(ValueVTable_QDate::set, ValueVTable_QDate::get));
 
     struct ValueVTable_QDateTime
     {
