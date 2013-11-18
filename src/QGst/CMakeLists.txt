@@ -19,11 +19,12 @@ set(QtGStreamer_SRCS
     parse.cpp
     urihandler.cpp
     videoorientation.cpp
-#    videooverlay.cpp
+    videooverlay.cpp
     streamvolume.cpp
     colorbalance.cpp
     query.cpp
     clock.cpp
+    memory.cpp
     buffer.cpp
     event.cpp
     clocktime.cpp

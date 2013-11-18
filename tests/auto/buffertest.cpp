@@ -17,6 +17,7 @@
 */
 #include "qgsttest.h"
 #include <QGst/Buffer>
+#include <QGst/Memory>
 #include <QGst/Pad>
 #include <QGst/Caps>
 
@@ -28,6 +29,7 @@ private Q_SLOTS:
     void capsTest();
     void flagsTest();
     void copyTest();
+    void memoryPeekTest();
 };
 
 void BufferTest::simpleTest()
@@ -35,8 +37,7 @@ void BufferTest::simpleTest()
     QGst::BufferPtr buffer = QGst::Buffer::create(10);
 
     QCOMPARE(buffer->size(), (quint32) 10);
-    QVERIFY2(false, "Implement GstMemory, GstMemInfo");
-    //FIXME: QVERIFY(buffer->data());
+    QVERIFY(buffer->peekMemory(0));
 }
 
 //FIXME: This test needs to go somewhere else.
@@ -87,6 +88,24 @@ void BufferTest::copyTest()
     QVERIFY(buffer->flags() != buffer2->flags());
 }
 
+void BufferTest::memoryPeekTest()
+{
+    QGst::BufferPtr buffer = QGst::Buffer::create(10);
+    guint8 bytes[100];
+    size_t returned_bytes;
+
+    returned_bytes = buffer->extract(0, &bytes, 10);
+    QCOMPARE(returned_bytes, static_cast<size_t>(10));
+
+    returned_bytes = buffer->extract(0, &bytes, 20);
+    QCOMPARE(returned_bytes, static_cast<size_t>(10));
+
+    QGst::MemoryPtr m = buffer->peekMemory(0);
+
+    QVERIFY(m);
+    QVERIFY(m->isWritable());
+
+}
 QTEST_APPLESS_MAIN(BufferTest)
 
 #include "moc_qgsttest.cpp"

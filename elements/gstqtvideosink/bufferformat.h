@@ -22,6 +22,7 @@
 #include <gst/video/video.h>
 
 //0.11 stuff
+/*
 typedef enum {
   GST_VIDEO_COLOR_MATRIX_UNKNOWN = 0,
   GST_VIDEO_COLOR_MATRIX_RGB,
@@ -30,7 +31,7 @@ typedef enum {
   GST_VIDEO_COLOR_MATRIX_BT601,
   GST_VIDEO_COLOR_MATRIX_SMPTE240M
 } GstVideoColorMatrix;
-
+*/
 
 /**
  * This class is a cheap way to represent Caps.
@@ -40,35 +41,31 @@ class BufferFormat
 {
 public:
     static BufferFormat fromCaps(GstCaps *caps);
-    static GstCaps *newTemplateCaps(GstVideoFormat format);
+    //static GstCaps *newTemplateCaps(GstVideoFormat format);
     static GstCaps *newCaps(GstVideoFormat format, const QSize & size,
             const Fraction & framerate, const Fraction & pixelAspectRatio);
 
     inline BufferFormat() : d(new Data) {}
 
-    inline GstVideoFormat videoFormat() const       { return d->videoFormat; }
-    inline GstVideoColorMatrix colorMatrix() const  { return d->colorMatrix; }
-    inline QSize frameSize() const                  { return d->frameSize; }
-    inline Fraction pixelAspectRatio() const        { return d->pixelAspectRatio; }
+    inline GstVideoInfo videoInfo() const           { return d->videoInfo; }
+    inline GstVideoFormat videoFormat() const;
+    inline GstVideoColorMatrix colorMatrix() const;
+    inline QSize frameSize() const;
+    inline Fraction pixelAspectRatio() const;
     int bytesPerLine(int component = 0) const;
 
 private:
     struct Data : public QSharedData
     {
-        Data() :
-            videoFormat(GST_VIDEO_FORMAT_UNKNOWN),
-            colorMatrix(GST_VIDEO_COLOR_MATRIX_UNKNOWN)
-        {}
+        Data()
+        { gst_video_info_init(&videoInfo); }
 
-        GstVideoFormat videoFormat;
-        GstVideoColorMatrix colorMatrix;
-        QSize frameSize;
-        Fraction pixelAspectRatio;
+        GstVideoInfo videoInfo;
     };
     QSharedDataPointer<Data> d;
 };
 
-
+Q_DECLARE_METATYPE(GstVideoInfo)
 Q_DECLARE_METATYPE(GstVideoFormat)
 Q_DECLARE_METATYPE(GstVideoColorMatrix)
 Q_DECLARE_METATYPE(BufferFormat)

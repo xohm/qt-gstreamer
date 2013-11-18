@@ -497,5 +497,30 @@ namespace QGst {
 }
 QGST_REGISTER_TYPE(QGst::DiscovererResult)
 
+namespace QGst {
+    enum MapFlag {
+	MapRead = (1 << 0),
+	MapWrite = (1 << 1),
 
+	MapFlagLast = (1 << 16)
+    };
+    Q_DECLARE_FLAGS(MapFlags, MapFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::MapFlags)
+QGST_REGISTER_TYPE(QGst::MapFlags)
+
+namespace QGst {
+    enum MemoryFlag {
+	MemoryFlagReadonly = MiniObjectFlagLockReadonly,
+	MemoryFlagNoShare = (MiniObjectFlagLast << 0),
+	MemoryFlagZeroPrefixed = (MiniObjectFlagLast << 1),
+	MemoryFlagZeroPadded = (MiniObjectFlagLast << 2),
+	MemoryFlagPhysicallyContiguous = (MiniObjectFlagLast << 3),
+	MemoryFlagNotMappable = (MiniObjectFlagLast << 4),
+	MemoryFlagLast = (MiniObjectFlagLast << 16)
+    };
+    Q_DECLARE_FLAGS(MemoryFlags, MemoryFlag);
+}
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGst::MemoryFlags)
+QGST_REGISTER_TYPE(QGst::MemoryFlags)
 #endif

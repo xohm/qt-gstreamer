@@ -36,20 +36,20 @@ namespace Private {
 void registerValueVTables()
 {
     // FIXME: What should we do with MiniObject Handling
-    // struct ValueVTable_MiniObject
-    // {
-    //     static void get(const QGlib::Value & value, void *data)
-    //     {
-    //         *reinterpret_cast<GstMiniObject**>(data) = gst_value_get_mini_object(value);
-    //     };
+    struct ValueVTable_MiniObject
+    {
+        static void get(const QGlib::Value & value, void *data)
+        {
+            data = g_value_get_boxed(value);
+        };
 
-    //     static void set(QGlib::Value & value, const void *data)
-    //     {
-    //         gst_value_set_mini_object(value, *reinterpret_cast<GstMiniObject* const *>(data));
-    //     };
-    // };
-    // QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
-    //         QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
+        static void set(QGlib::Value & value, const void *data)
+        {
+            g_value_set_boxed(value, *reinterpret_cast<GstMiniObject* const *>(data));
+        };
+    };
+    QGlib::Value::registerValueVTable(QGlib::GetType<MiniObject>(),
+            QGlib::ValueVTable(ValueVTable_MiniObject::set, ValueVTable_MiniObject::get));
 
 
     // FIXME: What should we do with Fourcc?

@@ -440,6 +440,10 @@ REGISTER_TYPE_IMPLEMENTATION(QGst::TagFlags,GST_TYPE_TAG_FLAG)
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::DiscovererResult,GST_TYPE_DISCOVERER_RESULT)
 
+REGISTER_TYPE_IMPLEMENTATION(QGst::MapFlags,GST_TYPE_MAP_FLAGS)
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::MemoryFlags,GST_TYPE_MEMORY_FLAGS)
+
 namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(MiniObjectFlagLockable) == static_cast<int>(GST_MINI_OBJECT_FLAG_LOCKABLE));
     BOOST_STATIC_ASSERT(static_cast<int>(MiniObjectFlagLockReadonly) == static_cast<int>(GST_MINI_OBJECT_FLAG_LOCK_READONLY));
@@ -760,6 +764,22 @@ namespace QGst {
     BOOST_STATIC_ASSERT(static_cast<int>(DiscovererMissingPlugins) == static_cast<int>(GST_DISCOVERER_MISSING_PLUGINS));
 }
 
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(MapRead) == static_cast<int>(GST_MAP_READ));
+    BOOST_STATIC_ASSERT(static_cast<int>(MapWrite) == static_cast<int>(GST_MAP_WRITE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MapFlagLast) == static_cast<int>(GST_MAP_FLAG_LAST));
+}
+
+namespace QGst {
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagReadonly) == static_cast<int>(GST_MEMORY_FLAG_READONLY));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagNoShare) == static_cast<int>(GST_MEMORY_FLAG_NO_SHARE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagZeroPrefixed) == static_cast<int>(GST_MEMORY_FLAG_ZERO_PREFIXED));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagZeroPadded) == static_cast<int>(GST_MEMORY_FLAG_ZERO_PADDED));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagPhysicallyContiguous) == static_cast<int>(GST_MEMORY_FLAG_PHYSICALLY_CONTIGUOUS));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagNotMappable) == static_cast<int>(GST_MEMORY_FLAG_NOT_MAPPABLE));
+    BOOST_STATIC_ASSERT(static_cast<int>(MemoryFlagLast) == static_cast<int>(GST_MEMORY_FLAG_LAST));
+}
+
 #include "QGst/colorbalance.h"
 
 REGISTER_TYPE_IMPLEMENTATION(QGst::ColorBalanceChannel,GST_TYPE_COLOR_BALANCE_CHANNEL)
@@ -807,6 +827,19 @@ namespace QGst {
   QGlib::RefCountedObject *MiniObject_new(void *instance)
   {
     QGst::MiniObject *cppClass = new QGst::MiniObject;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGst
+
+#include "QGst/memory.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGst::Memory,GST_TYPE_MEMORY)
+
+namespace QGst {
+  QGlib::RefCountedObject *Memory_new(void *instance)
+  {
+    QGst::Memory *cppClass = new QGst::Memory;
     cppClass->m_object = instance;
     return cppClass;
   }
@@ -1015,6 +1048,7 @@ namespace Private {
     QGlib::GetType<ColorBalance>().setQuarkData(q, reinterpret_cast<void*>(&ColorBalance_new));
     QGlib::GetType<Clock>().setQuarkData(q, reinterpret_cast<void*>(&Clock_new));
     QGlib::GetType<MiniObject>().setQuarkData(q, reinterpret_cast<void*>(&MiniObject_new));
+    QGlib::GetType<Memory>().setQuarkData(q, reinterpret_cast<void*>(&Memory_new));
     QGlib::GetType<Sample>().setQuarkData(q, reinterpret_cast<void*>(&Sample_new));
     QGlib::GetType<DiscovererStreamInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererStreamInfo_new));
     QGlib::GetType<DiscovererContainerInfo>().setQuarkData(q, reinterpret_cast<void*>(&DiscovererContainerInfo_new));

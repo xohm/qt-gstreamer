@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "buffer.h"
+#include "memory.h"
 #include "caps.h"
 #include <QtCore/QDebug>
 #include <gst/gst.h>
@@ -24,7 +25,8 @@ namespace QGst {
 
 BufferPtr Buffer::create(uint size)
 {
-    return BufferPtr::wrap(gst_buffer_new_and_alloc(size), false);
+    GstBuffer *buf = gst_buffer_new_allocate(NULL, size, NULL);
+    return BufferPtr::wrap(buf, false);
 }
 
 // FIXME:  GST_BUFFER_DATA is replaced with gst_buffer_map & unmap.
@@ -78,6 +80,21 @@ void Buffer::setFlags(const BufferFlags flags)
 BufferPtr Buffer::copy() const
 {
     return BufferPtr::wrap(gst_buffer_copy(object<GstBuffer>()), false);
+}
+
+void Buffer::setSize(uint size)
+{
+    gst_buffer_set_size(object<GstBuffer>(), size);
+}
+
+uint Buffer::extract(uint offset, void *dest, uint size)
+{
+    return gst_buffer_extract(object<GstBuffer>(), offset, dest, size);
+}
+
+MemoryPtr Buffer::peekMemory(uint index)
+{
+    return MemoryPtr::wrap(gst_buffer_peek_memory(object<GstBuffer>(), index));
 }
 
 } //namespace QGst
