@@ -241,7 +241,7 @@ void MessageTest::durationMessageTest()
     QGst::DurationMessagePtr msg = QGst::DurationMessage::create(QGst::ObjectPtr());
     // FIXME: where does this go now? QGst::FormatBytes, 1456788
     QVERIFY(msg->type()==QGst::MessageDuration);
-    QCOMPARE(msg->typeName(), QString("duration"));
+    QCOMPARE(msg->typeName(), QString("duration-changed"));
 
     // FIXME: format removed
     // QVERIFY(msg->format()==QGst::FormatBytes);
