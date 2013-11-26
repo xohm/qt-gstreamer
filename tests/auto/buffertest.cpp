@@ -17,6 +17,8 @@
 */
 #include "qgsttest.h"
 #include <QGst/Buffer>
+#include <QGst/Element>
+#include <QGst/ElementFactory>
 #include <QGst/Memory>
 #include <QGst/Pad>
 #include <QGst/Caps>
@@ -44,16 +46,19 @@ void BufferTest::simpleTest()
 //FIXME: caps were moved from buffers to pads...
 void BufferTest::capsTest()
 {
-    QGst::PadPtr pad = QGst::Pad::create(QGst::PadSrc);
+    QGst::ElementPtr queue = QGst::ElementFactory::make("queue", NULL);
+    QGst::PadPtr pad = queue->getStaticPad("sink");
     QGst::CapsPtr caps = QGst::Caps::createSimple("video/x-raw");
     caps->setValue("width", 320);
     caps->setValue("height", 240);
 
-    pad->setCaps(caps);
+    queue->setState(QGst::StatePlaying);
+    QVERIFY(pad->setCaps(caps));
 
     QGst::CapsPtr caps2 = pad->caps();
 
     QVERIFY(caps->equals(caps2));
+    queue->setState(QGst::StateNull);
 }
 
 void BufferTest::flagsTest()
