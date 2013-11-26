@@ -73,7 +73,7 @@ bool Pad::unlink(const PadPtr & sink)
 
 CapsPtr Pad::caps() const
 {
-    return CapsPtr::wrap(gst_caps_make_writable(object<GstPad>()));
+    return CapsPtr::wrap(gst_pad_get_current_caps(object<GstPad>()));
 }
 
 CapsPtr Pad::allowedCaps() const
@@ -88,7 +88,11 @@ CapsPtr Pad::negotiatedCaps() const
 
 bool Pad::setCaps(const CapsPtr & caps)
 {
-    return gst_pad_set_caps(object<GstPad>(), caps);
+    if (caps.isNull() || !caps->isFixed()) {
+        return false;
+    }
+    CapsEventPtr event = CapsEvent::create(caps);
+    return sendEvent(event);
 }
 
 bool Pad::isActive() const
@@ -124,7 +128,11 @@ bool Pad::query(const QueryPtr & query)
 
 bool Pad::sendEvent(const EventPtr &event)
 {
-    return gst_pad_send_event(object<GstPad>(), event);
+    if (direction() == PadSrc) {
+        return gst_pad_push_event(object<GstPad>(), static_cast<GstEvent *>(event));
+    } else {
+        return gst_pad_send_event(object<GstPad>(), static_cast<GstEvent *>(event));
+    }
 }
 
 }
