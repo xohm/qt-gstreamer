@@ -182,7 +182,7 @@ void EventTest::latencyTest()
 
 void EventTest::stepTest()
 {
-    QGst::StepEventPtr evt = QGst::StepEvent::create(QGst::FormatTime, 100000, 0.5, false, false);
+    QGst::StepEventPtr evt = QGst::StepEvent::create(QGst::FormatTime, 100000, 0.5, true, false);
     QVERIFY(evt->type()==QGst::EventStep);
     QCOMPARE(evt->typeName(), QString("step"));
 
