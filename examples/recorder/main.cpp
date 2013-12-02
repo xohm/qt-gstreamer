@@ -27,7 +27,6 @@
 #include <QGst/Init>
 #include <QGst/ElementFactory>
 #include <QGst/ChildProxy>
-#include <QGst/PropertyProbe>
 #include <QGst/Pipeline>
 #include <QGst/Pad>
 #include <QGst/Event>
