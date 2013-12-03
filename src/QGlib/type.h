@@ -94,6 +94,7 @@ public:
 
     inline Type & operator=(Type other);
     inline bool operator==(Type other) const;
+    inline bool operator==(unsigned long gtype) const;
     inline operator Private::GType() const { return m_type; }
 
     static Type fromInstance(void *nativeInstance);
@@ -143,6 +144,11 @@ inline Type & Type::operator=(Type other)
 inline bool Type::operator==(Type other) const
 {
     return m_type == other.m_type;
+}
+
+inline bool Type::operator==(unsigned long gtype) const
+{
+  return m_type == gtype;
 }
 
 template <class T>
