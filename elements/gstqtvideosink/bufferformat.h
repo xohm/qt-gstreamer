@@ -41,17 +41,24 @@ class BufferFormat
 {
 public:
     static BufferFormat fromCaps(GstCaps *caps);
-    //static GstCaps *newTemplateCaps(GstVideoFormat format);
+    static GstCaps *newTemplateCaps(GstVideoFormat format);
     static GstCaps *newCaps(GstVideoFormat format, const QSize & size,
             const Fraction & framerate, const Fraction & pixelAspectRatio);
 
     inline BufferFormat() : d(new Data) {}
 
     inline GstVideoInfo videoInfo() const           { return d->videoInfo; }
-    inline GstVideoFormat videoFormat() const;
-    inline GstVideoColorMatrix colorMatrix() const;
-    inline QSize frameSize() const;
-    inline Fraction pixelAspectRatio() const;
+    inline GstVideoFormat videoFormat() const {  return GST_VIDEO_INFO_FORMAT(&(d->videoInfo)); }
+    inline GstVideoColorMatrix colorMatrix() const { return d->videoInfo.colorimetry.matrix; }
+    QSize frameSize() const {
+        return QSize(GST_VIDEO_INFO_WIDTH(&(d->videoInfo)),
+                     GST_VIDEO_INFO_HEIGHT(&(d->videoInfo)));
+    }
+    Fraction pixelAspectRatio() const {
+        return Fraction(GST_VIDEO_INFO_PAR_N(&(d->videoInfo)),
+                        GST_VIDEO_INFO_PAR_D(&(d->videoInfo)));
+    }
+
     int bytesPerLine(int component = 0) const;
 
 private:

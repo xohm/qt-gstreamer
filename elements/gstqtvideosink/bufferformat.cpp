@@ -28,10 +28,16 @@ BufferFormat BufferFormat::fromCaps(GstCaps *caps)
     return result;
 }
 
-/* FIXME: I'm not sure how to fix this.
 GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
 {
-    GstCaps *caps = gst_video_format_new_template_caps(format);
+    //GstCaps *caps = gst_video_format_new_template_caps(format);
+    // cribbed from gst-plugins-bad1.0 1.2.1 ext/eglgles/gstegladaptation.c
+    GstCaps *caps = gst_caps_new_simple("video/x-raw",
+					"format", G_TYPE_STRING, gst_video_format_to_string(format),
+					"width", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+					"height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+					"framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
+    
 
     // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
@@ -48,7 +54,6 @@ GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
 #endif
     return caps;
 }
-*/
 
 GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
                                const Fraction & framerate, const Fraction & pixelAspectRatio)
@@ -80,29 +85,6 @@ GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
 #endif
 
     return caps;
-}
-
-inline GstVideoFormat BufferFormat::videoFormat() const
-{
-    return GST_VIDEO_INFO_FORMAT(&(d->videoInfo));
-}
-
-inline GstVideoColorMatrix BufferFormat::colorMatrix() const
-{
-    return d->videoInfo.colorimetry.matrix;
-}
-
-inline QSize BufferFormat::frameSize() const
-{
-    return QSize(GST_VIDEO_INFO_WIDTH(&(d->videoInfo)),
-                 GST_VIDEO_INFO_HEIGHT(&(d->videoInfo)));
-}
-
-Fraction BufferFormat::pixelAspectRatio() const
-{
-
-    return Fraction(GST_VIDEO_INFO_PAR_N(&(d->videoInfo)),
-                    GST_VIDEO_INFO_PAR_D(&(d->videoInfo)));
 }
 
 int BufferFormat::bytesPerLine(int component) const

@@ -359,29 +359,35 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     QPainter painter(&targetImage);
 
     GstBufferPtr buffer(generateTestBuffer(format, 4)); //pattern = red
+    GstMapInfo info;
     QVERIFY(!buffer.isNull());
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
     genericSurfacePainter.paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         areas.targetArea,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(255, 0, 0));
+    gst_buffer_unmap(buffer.data(), &info);
 
     buffer.reset(generateTestBuffer(format, 5)); //pattern = green
     QVERIFY(!buffer.isNull());
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
     genericSurfacePainter.paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         areas.targetArea,
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(0, 255, 0));
+    gst_buffer_unmap(buffer.data(), &info);
 
     buffer.reset(generateTestBuffer(format, 6)); //pattern = blue
     QVERIFY(!buffer.isNull());
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
     genericSurfacePainter.paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         areas.targetArea,
         &painter,
@@ -391,12 +397,13 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
 
     QBENCHMARK {
         genericSurfacePainter.paint(
-            GST_BUFFER_DATA(buffer.data()),
+            info.data,
             bufferFormat,
             areas.targetArea,
             &painter,
             areas);
     }
+    gst_buffer_unmap(buffer.data(), &info);
 }
 
 //------------------------------------
@@ -467,9 +474,11 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     QPainter painter(&pixelBuffer);
 
     GstBufferPtr buffer(generateTestBuffer(format, 4)); //pattern = red
+    GstMapInfo info;
     QVERIFY(!buffer.isNull());
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
     glSurfacePainter->paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         areas.targetArea,
         &painter,
@@ -482,11 +491,13 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
         QFAIL("Failing due to differences in the compared images");
     }
+    gst_buffer_unmap(buffer.data(), &info);
 
     buffer.reset(generateTestBuffer(format, 5)); //pattern = green
     QVERIFY(!buffer.isNull());
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
     glSurfacePainter->paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         areas.targetArea,
         &painter,
@@ -498,11 +509,13 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
                 qRed(pixel1), qGreen(pixel1), qBlue(pixel1),
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
     }
-
+    gst_buffer_unmap(buffer.data(), &info);
+    
     buffer.reset(generateTestBuffer(format, 6)); //pattern = blue
     QVERIFY(!buffer.isNull());
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
     glSurfacePainter->paint(
-        GST_BUFFER_DATA(buffer.data()),
+        info.data,
         bufferFormat,
         areas.targetArea,
         &painter,
@@ -518,12 +531,14 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
 
     QBENCHMARK {
         glSurfacePainter->paint(
-            GST_BUFFER_DATA(buffer.data()),
+            info.data,
             bufferFormat,
             areas.targetArea,
             &painter,
             areas);
     }
+    gst_buffer_unmap(buffer.data(), &info);
+
 }
 
 #endif
@@ -769,17 +784,20 @@ void QtVideoSinkTest::qtVideoSinkTest()
     QTest::qWait(1000);
 
     GstBuffer *bufferPtr = NULL;
-    gst_child_proxy_get(GST_OBJECT(pipeline.data()), "fakesink::last-buffer", &bufferPtr, NULL);
+    gst_child_proxy_get(GST_CHILD_PROXY(pipeline.data()), "fakesink::last-buffer", &bufferPtr, NULL);
 
     GstBufferPtr buffer(bufferPtr);
+    GstMapInfo info;
     QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
 
+    QVERIFY(0); // FIXME: replace get_row_stride
     { //increased scope so that expectedImage gets deleted before the buffer
-        QImage expectedImage(GST_BUFFER_DATA(buffer.data()),
-                widgetSize.width(), widgetSize.height(),
-                gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width()),
-                QImage::Format_ARGB32);
-        QImage actualImage = QPixmap::grabWindow(widget->winId()).toImage();
+//         QImage expectedImage(info.data,
+//                 widgetSize.width(), widgetSize.height(),
+//                 gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width()),
+//                 QImage::Format_ARGB32);
+//         QImage actualImage = QPixmap::grabWindow(widget->winId()).toImage();
 
 #if 0
         // visual debugging
@@ -810,7 +828,8 @@ void QtVideoSinkTest::qtVideoSinkTest()
         QTest::qWait(1000); //just for visual feedback
 #endif
 
-        imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
+//         imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
+        gst_buffer_unmap(buffer.data(), &info);
     }
 }
 

@@ -27,20 +27,20 @@ GstQtVideoSinkBaseClass *GstQtGLVideoSinkBase::s_parent_class = 0;
 
 //------------------------------
 
-DEFINE_TYPE_FULL(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE, init_interfaces)
+DEFINE_TYPE(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE)
 
-void GstQtGLVideoSinkBase::init_interfaces(GType type)
-{
-    static const GInterfaceInfo implementsiface_info = {
-        (GInterfaceInitFunc) &GstQtGLVideoSinkBase::implementsiface_init, NULL, NULL
-    };
-    static const GInterfaceInfo colorbalance_info = {
-        (GInterfaceInitFunc) &GstQtGLVideoSinkBase::colorbalance_init, NULL, NULL
-    };
-
-    g_type_add_interface_static(type, GST_TYPE_IMPLEMENTS_INTERFACE, &implementsiface_info);
-    g_type_add_interface_static(type, GST_TYPE_COLOR_BALANCE, &colorbalance_info);
-}
+// void GstQtGLVideoSinkBase::init_interfaces(GType type)
+// {
+//     static const GInterfaceInfo implementsiface_info = {
+//         (GInterfaceInitFunc) &GstQtGLVideoSinkBase::implementsiface_init, NULL, NULL
+//     };
+//     static const GInterfaceInfo colorbalance_info = {
+//         (GInterfaceInitFunc) &GstQtGLVideoSinkBase::colorbalance_init, NULL, NULL
+//     };
+// 
+//     g_type_add_interface_static(type, GST_TYPE_IMPLEMENTS_INTERFACE, &implementsiface_info);
+//     g_type_add_interface_static(type, GST_TYPE_COLOR_BALANCE, &colorbalance_info);
+// }
 
 //------------------------------
 
@@ -133,27 +133,27 @@ void GstQtGLVideoSinkBase::finalize(GObject *object)
 
 //------------------------------
 
-void GstQtGLVideoSinkBase::implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data)
-{
-    Q_UNUSED(data);
-    klass->supported = &GstQtGLVideoSinkBase::interface_supported;
-}
-
-gboolean GstQtGLVideoSinkBase::interface_supported(GstImplementsInterface *iface, GType type)
-{
-    Q_UNUSED(iface);
-    return type == GST_TYPE_COLOR_BALANCE;
-}
+// void GstQtGLVideoSinkBase::implementsiface_init(GstImplementsInterfaceClass *klass, gpointer data)
+// {
+//     Q_UNUSED(data);
+//     klass->supported = &GstQtGLVideoSinkBase::interface_supported;
+// }
+// 
+// gboolean GstQtGLVideoSinkBase::interface_supported(GstImplementsInterface *iface, GType type)
+// {
+//     Q_UNUSED(iface);
+//     return type == GST_TYPE_COLOR_BALANCE;
+// }
 
 //------------------------------
 
 void GstQtGLVideoSinkBase::colorbalance_init(GstColorBalanceInterface *interface, gpointer data)
 {
     Q_UNUSED(data);
-    GST_TYPE_COLOR_BALANCE(interface) = GST_COLOR_BALANCE_HARDWARE;
     interface->list_channels = GstQtGLVideoSinkBase::colorbalance_list_channels;
     interface->set_value = GstQtGLVideoSinkBase::colorbalance_set_value;
     interface->get_value = GstQtGLVideoSinkBase::colorbalance_get_value;
+    interface->get_balance_type = NULL; //FIXME: need implementation
 }
 
 const GList *GstQtGLVideoSinkBase::colorbalance_list_channels(GstColorBalance *balance)
@@ -265,7 +265,8 @@ gboolean GstQtGLVideoSinkBase::start(GstBaseSink *base)
     }
 }
 
-GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base)
+//FIXME: do something with filter
+GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
     Q_UNUSED(base);
 
