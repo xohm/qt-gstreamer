@@ -40,9 +40,9 @@ ElementFactoryPtr ElementFactory::find(const char *factoryName)
 ElementPtr ElementFactory::make(const char *factoryName, const char *elementName)
 {
     GstElement *e = gst_element_factory_make(factoryName, elementName);
-    //if (e) {
-    //    gst_object_ref_sink(e);
-    //}
+    if (e) {
+        gst_object_ref_sink(e);
+    }
     return ElementPtr::wrap(e, false);
 }
 
