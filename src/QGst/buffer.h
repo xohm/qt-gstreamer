@@ -18,6 +18,7 @@
 #ifndef QGST_BUFFER_H
 #define QGST_BUFFER_H
 
+#include "global.h"
 #include "miniobject.h"
 #include "clocktime.h"
 
@@ -37,7 +38,6 @@ class QTGSTREAMER_EXPORT Buffer : public MiniObject
 public:
     static BufferPtr create(uint size);
 
-    quint8 * data() const;
     quint32 size() const;
 
     ClockTime decodingTimeStamp() const;
@@ -57,6 +57,9 @@ public:
 
     BufferPtr copy() const;
     inline BufferPtr makeWritable() const;
+
+    bool map(MapInfo &info, MapFlags flags);
+    void unmap(MapInfo &info);
 };
 
 BufferPtr Buffer::makeWritable() const

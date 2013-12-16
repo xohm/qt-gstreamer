@@ -22,20 +22,13 @@
 #include <gst/gst.h>
 
 namespace QGst {
+class MapInfo;
 
 BufferPtr Buffer::create(uint size)
 {
     GstBuffer *buf = gst_buffer_new_allocate(NULL, size, NULL);
     return BufferPtr::wrap(buf, false);
 }
-
-// FIXME:  GST_BUFFER_DATA is replaced with gst_buffer_map & unmap.
-// this interface is more complex than this one and i'm not sure
-// how best to implement it.
-// quint8 * Buffer::data() const
-// {
-//     return GST_BUFFER_DATA(object<GstBuffer>());
-// }
 
 quint32 Buffer::size() const
 {
@@ -95,6 +88,21 @@ uint Buffer::extract(uint offset, void *dest, uint size)
 MemoryPtr Buffer::peekMemory(uint index)
 {
     return MemoryPtr::wrap(gst_buffer_peek_memory(object<GstBuffer>(), index));
+}
+
+bool Buffer::map(MapInfo &info, MapFlags flags)
+{
+   BufferPtr bptr(this);
+    if (!gst_buffer_map(bptr, reinterpret_cast<GstMapInfo *>(&info), static_cast<GstMapFlags>(static_cast<int>(flags)))) {
+        return false;
+    }
+   return true;
+}
+
+void Buffer::unmap(MapInfo &info)
+{
+    BufferPtr bptr(this);
+    gst_buffer_unmap(bptr, reinterpret_cast<GstMapInfo *>(&info));
 }
 
 } //namespace QGst

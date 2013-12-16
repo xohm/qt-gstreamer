@@ -21,6 +21,7 @@
 #include "miniobject.h"
 
 namespace QGst {
+class Buffer;
 
     /*! \headerfile memory.h <QGst/Memory>
      *  \brief Wrapper class for GstMemory
@@ -32,10 +33,36 @@ namespace QGst {
 
 // class QTGSTREAMER_EXPORT MapInfo
 // {
+// public:
+//     MapInfo();
+//     virtual ~MapInfo();
+// 
+//     MemoryPtr memory();
+//     MapFlags flags();
+//     const quint8 *data();
+//     size_t size();
+//     size_t maxsize();
+// 
+//     friend Memory;
+//     friend Buffer;
+// protected:
+//    static MapInfoPtr map_buffer(Buffer *buffer, MapFlags flags);
+//    void unmap_buffer(Buffer *buffer);
+// 
 // private:
 //     struct Data;
 //     QSharedDataPointer<Data> d;
 // };
+
+class MapInfo
+{
+private:
+    void *memory;
+    MapFlags flags;
+    quint8 *data;
+    size_t size;
+    size_t maxsize;
+};
 
 class QTGSTREAMER_EXPORT Memory : public MiniObject
 {
@@ -45,8 +72,8 @@ public:
 
     size_t getSizes(size_t &offset, size_t &maxsize);
 
-    // bool map(MapInfo &info, MapFlags flags);
-    // void unmap(MapInfo &info);
+    bool map(MapInfo &info, MapFlags flags);
+    void unmap(MapInfo &info);
 };
 
 } // namespace QGst
