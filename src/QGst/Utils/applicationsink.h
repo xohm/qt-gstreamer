@@ -168,7 +168,7 @@ protected:
     /*! Called when a new sample list is available. The new sample list can be retrieved
      * with pullBufferList() either from this function or from any other thread.
      * \note This function is called from the steaming thread. */
-    virtual FlowReturn newBufferList();
+    //FIXME:virtual FlowReturn newBufferList();
 
 private:
     /* vtable padding */
