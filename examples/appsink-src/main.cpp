@@ -19,6 +19,7 @@
 #include <QtCore/QCoreApplication>
 #include <QGlib/Error>
 #include <QGlib/Connect>
+
 #include <QGst/Init>
 #include <QGst/Bus>
 #include <QGst/Pipeline>
@@ -40,9 +41,10 @@ protected:
         m_src->endOfStream();
     }
 
-    virtual QGst::FlowReturn newBuffer()
+    virtual QGst::FlowReturn newSample()
     {
-        m_src->pushSample(pullBuffer());
+        QGst::SamplePtr sample = pullSample();
+        m_src->pushBuffer(sample->buffer());
         return QGst::FlowOk;
     }
 
