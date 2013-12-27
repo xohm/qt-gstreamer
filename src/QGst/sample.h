@@ -18,7 +18,7 @@
 #ifndef QGST_SAMPLE_H
 #define QGST_SAMPLE_H
 
-#include "object.h"
+#include "miniobject.h"
 
 namespace QGst {
 
@@ -28,7 +28,7 @@ namespace QGst {
      * Samples are small objects containg data, a type, timing and extra arbitrary information.
      *
      */
-class QTGSTREAMER_EXPORT Sample : public Object
+class QTGSTREAMER_EXPORT Sample : public MiniObject
 {
     QGST_WRAPPER(Sample)
 public:
