@@ -26,6 +26,8 @@
 #include "../QGlib/value.h"
 #include <QtCore/QString>
 
+#include "object.h"
+
 namespace QGst {
 
 /*! \headerfile structure.h <QGst/Structure>
@@ -46,7 +48,7 @@ namespace QGst {
  * \note This class is implicitly shared.
  * \sa SharedStructure
  */
-class QTGSTREAMER_EXPORT Structure
+class QTGSTREAMER_EXPORT Structure : public Object
 {
 public:
     Structure();
