@@ -26,37 +26,13 @@ class Buffer;
     /*! \headerfile memory.h <QGst/Memory>
      *  \brief Wrapper class for GstMemory
      *
-     * GstMemory is a lightweight refcounted object that wraps a region 
-     * of memory. They are typically used to manage the data of a 
+     * GstMemory is a lightweight refcounted object that wraps a region
+     * of memory. They are typically used to manage the data of a
      * GstBuffer.
      */
 
-// class QTGSTREAMER_EXPORT MapInfo
-// {
-// public:
-//     MapInfo();
-//     virtual ~MapInfo();
-// 
-//     MemoryPtr memory();
-//     MapFlags flags();
-//     const quint8 *data();
-//     size_t size();
-//     size_t maxsize();
-// 
-//     friend Memory;
-//     friend Buffer;
-// protected:
-//    static MapInfoPtr map_buffer(Buffer *buffer, MapFlags flags);
-//    void unmap_buffer(Buffer *buffer);
-// 
-// private:
-//     struct Data;
-//     QSharedDataPointer<Data> d;
-// };
-
-class MapInfo
+struct MapInfo
 {
-private:
     void *memory;
     MapFlags flags;
     quint8 *data;
@@ -68,6 +44,7 @@ class QTGSTREAMER_EXPORT Memory : public MiniObject
 {
     QGST_WRAPPER(Memory)
 public:
+    static MemoryPtr create(size_t size);
     static MemoryPtr create(MemoryFlags flags, void *allocator, MemoryPtr parent, size_t maxsize, size_t align, size_t offset, size_t size);
 
     size_t getSizes(size_t &offset, size_t &maxsize);
