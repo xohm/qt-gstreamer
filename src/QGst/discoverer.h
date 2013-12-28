@@ -31,7 +31,7 @@
 
 namespace QGst {
 
-class QTGSTREAMER_EXPORT DiscovererStreamInfo : public QGst::MiniObject
+class QTGSTREAMER_EXPORT DiscovererStreamInfo : public QGst::Object
 {
     QGST_WRAPPER(DiscovererStreamInfo)
 
@@ -89,7 +89,7 @@ public:
     QString language() const;
 };
 
-class QTGSTREAMER_EXPORT DiscovererInfo : public QGst::MiniObject
+class QTGSTREAMER_EXPORT DiscovererInfo : public QGst::Object
 {
     QGST_WRAPPER(DiscovererInfo)
 
