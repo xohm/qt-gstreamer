@@ -60,16 +60,16 @@ struct ElementDeleter
 typedef QScopedPointer<GstElement, ElementDeleter> GstElementPtr;
 
 
-struct BufferDeleter
+struct SampleDeleter
 {
-    static inline void cleanup(GstBuffer *ptr) {
+    static inline void cleanup(GstSample *ptr) {
         if (ptr) {
-            gst_buffer_unref(ptr);
+            gst_sample_unref(ptr);
         }
     }
 };
 
-typedef QScopedPointer<GstBuffer, BufferDeleter> GstBufferPtr;
+typedef QScopedPointer<GstSample, SampleDeleter> GstSamplePtr;
 
 //------------------------------------
 
@@ -150,7 +150,7 @@ private Q_SLOTS:
     void cleanupTestCase();
 
 private:
-    GstBuffer *generateTestBuffer(GstVideoFormat format, int pattern);
+    GstSample *generateTestBuffer(GstVideoFormat format, int pattern);
     GstPipeline *constructPipeline(GstCaps *caps, GstCaps *fakesinkCaps,
                                    bool forceAspectRatio, void *context);
     void imageCompare(const QImage & image1, const QImage & image2, const QSize & sourceSize);
@@ -358,10 +358,12 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
     targetImage.fill(Qt::black);
     QPainter painter(&targetImage);
 
-    GstBufferPtr buffer(generateTestBuffer(format, 4)); //pattern = red
+    GstSamplePtr sample(generateTestBuffer(format, 4)); //pattern = red
+    QVERIFY(!sample.isNull());
+    GstBuffer *buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
     GstMapInfo info;
-    QVERIFY(!buffer.isNull());
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     genericSurfacePainter.paint(
         info.data,
         bufferFormat,
@@ -369,11 +371,13 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(255, 0, 0));
-    gst_buffer_unmap(buffer.data(), &info);
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 5)); //pattern = green
-    QVERIFY(!buffer.isNull());
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    sample.reset(generateTestBuffer(format, 5)); //pattern = green
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     genericSurfacePainter.paint(
         info.data,
         bufferFormat,
@@ -381,11 +385,13 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
         &painter,
         areas);
     QCOMPARE(targetImage.pixel(50, 50), qRgb(0, 255, 0));
-    gst_buffer_unmap(buffer.data(), &info);
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 6)); //pattern = blue
-    QVERIFY(!buffer.isNull());
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    sample.reset(generateTestBuffer(format, 6)); //pattern = blue
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     genericSurfacePainter.paint(
         info.data,
         bufferFormat,
@@ -403,7 +409,7 @@ void QtVideoSinkTest::genericSurfacePainterFormatsTest()
             &painter,
             areas);
     }
-    gst_buffer_unmap(buffer.data(), &info);
+    gst_buffer_unmap(buffer, &info);
 }
 
 //------------------------------------
@@ -473,10 +479,13 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
     glSurfacePainter->updateColors(0, 0, 0, 0);
     QPainter painter(&pixelBuffer);
 
-    GstBufferPtr buffer(generateTestBuffer(format, 4)); //pattern = red
+    GstSamplePtr sample(generateTestBuffer(format, 4)); //pattern = red
+    QVERIFY(!sample.isNull());
     GstMapInfo info;
-    QVERIFY(!buffer.isNull());
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    GstBuffer *buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     glSurfacePainter->paint(
         info.data,
         bufferFormat,
@@ -491,11 +500,13 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
         QFAIL("Failing due to differences in the compared images");
     }
-    gst_buffer_unmap(buffer.data(), &info);
+    gst_buffer_unmap(buffer, &info);
 
-    buffer.reset(generateTestBuffer(format, 5)); //pattern = green
-    QVERIFY(!buffer.isNull());
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    sample.reset(generateTestBuffer(format, 5)); //pattern = green
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     glSurfacePainter->paint(
         info.data,
         bufferFormat,
@@ -509,11 +520,13 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
                 qRed(pixel1), qGreen(pixel1), qBlue(pixel1),
                 qRed(pixel2), qGreen(pixel2), qBlue(pixel2));
     }
-    gst_buffer_unmap(buffer.data(), &info);
-    
-    buffer.reset(generateTestBuffer(format, 6)); //pattern = blue
-    QVERIFY(!buffer.isNull());
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    gst_buffer_unmap(buffer, &info);
+
+    sample.reset(generateTestBuffer(format, 6)); //pattern = blue
+    QVERIFY(!sample.isNull());
+    buffer = gst_sample_get_buffer(sample.data());
+    QVERIFY(buffer);
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
     glSurfacePainter->paint(
         info.data,
         bufferFormat,
@@ -537,7 +550,7 @@ void QtVideoSinkTest::glSurfacePainterFormatsTest()
             &painter,
             areas);
     }
-    gst_buffer_unmap(buffer.data(), &info);
+    gst_buffer_unmap(buffer, &info);
 
 }
 
@@ -783,16 +796,18 @@ void QtVideoSinkTest::qtVideoSinkTest()
     //and wait a bit for X/window manager/GPU/whatever to actually render the window
     QTest::qWait(1000);
 
-    GstBuffer *bufferPtr = NULL;
-    gst_child_proxy_get(GST_CHILD_PROXY(pipeline.data()), "fakesink::last-buffer", &bufferPtr, NULL);
+    GstSample *samplePtr = NULL;
+    gst_child_proxy_get(GST_CHILD_PROXY(pipeline.data()), "fakesink::last-sample", &samplePtr, NULL);
 
-    GstBufferPtr buffer(bufferPtr);
+    GstSamplePtr sample(samplePtr);
     GstMapInfo info;
+    QVERIFY(!sample.isNull());
+    GstBuffer *buffer = gst_sample_get_buffer(sample.data());
     QVERIFY(buffer);
-    QVERIFY(gst_buffer_map(buffer.data(), &info, GST_MAP_READ));
+    QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
 
     QVERIFY(0); // FIXME: replace get_row_stride
-    { //increased scope so that expectedImage gets deleted before the buffer
+    { //increased scope so that expectedImage gets deleted before the sample
 //         QImage expectedImage(info.data,
 //                 widgetSize.width(), widgetSize.height(),
 //                 gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width()),
@@ -829,7 +844,7 @@ void QtVideoSinkTest::qtVideoSinkTest()
 #endif
 
 //         imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
-        gst_buffer_unmap(buffer.data(), &info);
+        gst_buffer_unmap(buffer, &info);
     }
 }
 
@@ -844,15 +859,15 @@ void QtVideoSinkTest::qtVideoSinkTest()
         gst_bin_add(GST_BIN(pipeline.data()), variable); \
     }
 
-GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int pattern)
+GstSample* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int pattern)
 {
-    GstPipelinePtr pipeline(GST_PIPELINE(gst_pipeline_new("generate-test-buffer-pipeline")));
+    GstPipelinePtr pipeline(GST_PIPELINE(gst_pipeline_new("generate-test-sample-pipeline")));
     if (!pipeline) {
         return NULL;
     }
 
     MAKE_ELEMENT(videotestsrc, "videotestsrc");
-    MAKE_ELEMENT(ffmpegcolorspace, "ffmpegcolorspace");
+    MAKE_ELEMENT(videoconvert, "videoconvert");
     MAKE_ELEMENT(capsfilter, "capsfilter");
     MAKE_ELEMENT(fakesink, "fakesink");
 
@@ -861,10 +876,10 @@ GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int patter
     gst_caps_unref(caps);
 
     g_object_set(videotestsrc, "pattern", pattern, NULL);
-    g_object_set(fakesink, "enable-last-buffer", TRUE, NULL);
+    g_object_set(fakesink, "enable-last-sample", TRUE, NULL);
 
-    if (!gst_element_link_many(videotestsrc, ffmpegcolorspace, capsfilter, fakesink, NULL)) {
-        QWARN("Failed to link generate-test-buffer-pipeline");
+    if (!gst_element_link_many(videotestsrc, videoconvert, capsfilter, fakesink, NULL)) {
+        QWARN("Failed to link generate-test-sample-pipeline");
         return NULL;
     }
 
@@ -874,13 +889,13 @@ GstBuffer* QtVideoSinkTest::generateTestBuffer(GstVideoFormat format, int patter
     GstStateChangeReturn stateReturn = gst_element_get_state(GST_ELEMENT(pipeline.data()),
                                                              &state, NULL, 10 * GST_SECOND);
     if (stateReturn != GST_STATE_CHANGE_SUCCESS || state != GST_STATE_PAUSED) {
-        QWARN("Failed to set generate-test-buffer-pipeline to PAUSED");
+        QWARN("Failed to set generate-test-sample-pipeline to PAUSED");
         return NULL;
     }
 
-    GstBuffer *bufferPtr = NULL;
-    g_object_get(fakesink, "last-buffer", &bufferPtr, NULL);
-    return bufferPtr;
+    GstSample *samplePtr = NULL;
+    g_object_get(fakesink, "last-sample", &samplePtr, NULL);
+    return samplePtr;
 }
 
 GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
@@ -899,7 +914,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     MAKE_ELEMENT(qtvideosink, context ? "qtglvideosink" : "qtvideosink");
 
     MAKE_ELEMENT(queue2, "queue");
-    MAKE_ELEMENT(colorspace, "ffmpegcolorspace");
+    MAKE_ELEMENT(colorspace, "videoconvert");
     MAKE_ELEMENT(videoscale, "videoscale");
     MAKE_ELEMENT(capsfilter2, "capsfilter");
     MAKE_ELEMENT(fakesink, "fakesink");
@@ -907,7 +922,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
     g_object_set(videotestsrc, "pattern", 19, NULL); //color bars
     g_object_set(capsfilter, "caps", caps, NULL);
     g_object_set(capsfilter2, "caps", fakesinkCaps, NULL);
-    g_object_set(fakesink, "enable-last-buffer", TRUE, NULL);
+    g_object_set(fakesink, "enable-last-sample", TRUE, NULL);
 
     if (context) {
         g_object_set(qtvideosink, "glcontext", context, NULL);
