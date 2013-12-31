@@ -37,7 +37,6 @@ GstCaps* BufferFormat::newTemplateCaps(GstVideoFormat format)
 					"width", GST_TYPE_INT_RANGE, 1, G_MAXINT,
 					"height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
 					"framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
-    
 
     // workaround for https://bugzilla.gnome.org/show_bug.cgi?id=667681
 #if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
@@ -90,4 +89,14 @@ GstCaps* BufferFormat::newCaps(GstVideoFormat format, const QSize & size,
 int BufferFormat::bytesPerLine(int component) const
 {
     return GST_VIDEO_INFO_PLANE_STRIDE(&(d->videoInfo), component);
+}
+
+bool operator==(BufferFormat a, BufferFormat b)
+{
+    return a.d == b.d;
+}
+
+bool operator!=(BufferFormat a, BufferFormat b)
+{
+    return !(a.d == b.d);
 }
