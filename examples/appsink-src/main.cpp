@@ -79,12 +79,12 @@ Player::Player(int argc, char **argv)
         std::exit(1);
     }
 
-    const char *caps = "audio/x-raw-int,channels=1,rate=8000,"
+    const char *caps = "audio/x-raw,format=(string)int,channels=1,rate=8000,"
                        "signed=(boolean)true,width=16,depth=16,endianness=1234";
 
     /* source pipeline */
     QString pipe1Descr = QString("filesrc location=\"%1\" ! "
-                                 "decodebin2 ! "
+                                 "decodebin ! "
                                  "audioconvert ! "
                                  "audioresample ! "
                                  "appsink name=\"mysink\" caps=\"%2\"").arg(argv[1], caps);
