@@ -37,7 +37,7 @@ DEFINE_TYPE(GstQtGLVideoSinkBase, GST_TYPE_QT_VIDEO_SINK_BASE)
 //     static const GInterfaceInfo colorbalance_info = {
 //         (GInterfaceInitFunc) &GstQtGLVideoSinkBase::colorbalance_init, NULL, NULL
 //     };
-// 
+//
 //     g_type_add_interface_static(type, GST_TYPE_IMPLEMENTS_INTERFACE, &implementsiface_info);
 //     g_type_add_interface_static(type, GST_TYPE_COLOR_BALANCE, &colorbalance_info);
 // }
@@ -138,7 +138,7 @@ void GstQtGLVideoSinkBase::finalize(GObject *object)
 //     Q_UNUSED(data);
 //     klass->supported = &GstQtGLVideoSinkBase::interface_supported;
 // }
-// 
+//
 // gboolean GstQtGLVideoSinkBase::interface_supported(GstImplementsInterface *iface, GType type)
 // {
 //     Q_UNUSED(iface);
@@ -265,7 +265,6 @@ gboolean GstQtGLVideoSinkBase::start(GstBaseSink *base)
     }
 }
 
-//FIXME: do something with filter
 GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
     Q_UNUSED(base);
@@ -276,5 +275,11 @@ GstCaps *GstQtGLVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
         gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
     }
 
+    if (filter) {
+        GstCaps *intersection;
+        intersection = gst_caps_intersect_full(filter, caps, GST_CAPS_INTERSECT_FIRST);
+        gst_caps_unref(caps);
+        caps = intersection;
+    }
     return caps;
 }
