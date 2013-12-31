@@ -941,7 +941,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
         return NULL;
     }
 
-    if (!gst_element_link_pads(tee, "src%d", queue, "sink")) {
+    if (!gst_element_link_pads(tee, "src_%u", queue, "sink")) {
         QWARN("Failed to link tee to qtvideosink");
         return NULL;
     }
@@ -951,7 +951,7 @@ GstPipeline *QtVideoSinkTest::constructPipeline(GstCaps *caps,
         return NULL;
     }
 
-    if (!gst_element_link_pads(tee, "src%d", queue2, "sink")) {
+    if (!gst_element_link_pads(tee, "src_%u", queue2, "sink")) {
         QWARN("Failed to link tee to fakesink branch");
         return NULL;
     }
