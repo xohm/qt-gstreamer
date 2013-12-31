@@ -191,14 +191,14 @@ GstStateChangeReturn GstQtVideoSinkBase::change_state(GstElement *element, GstSt
 
 GstCaps *GstQtVideoSinkBase::get_caps(GstBaseSink *base, GstCaps *filter)
 {
-    Q_UNUSED(base);
+    GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
 
     GstCaps *caps = gst_caps_new_empty();
 
     Q_FOREACH(GstVideoFormat format, GenericSurfacePainter::supportedPixelFormats()) {
         gst_caps_append(caps, BufferFormat::newTemplateCaps(format));
     }
-
+    GST_LOG_OBJECT(sink, "returned caps %" GST_PTR_FORMAT, caps);
     return caps;
 }
 
@@ -207,7 +207,8 @@ gboolean GstQtVideoSinkBase::set_caps(GstBaseSink *base, GstCaps *caps)
     GstQtVideoSinkBase *sink = GST_QT_VIDEO_SINK_BASE(base);
 
     GST_LOG_OBJECT(sink, "new caps %" GST_PTR_FORMAT, caps);
-    sink->formatDirty = true;
+    BufferFormat format = BufferFormat::fromCaps(caps);
+    sink->delegate->setBufferFormat(format);
     return TRUE;
 }
 

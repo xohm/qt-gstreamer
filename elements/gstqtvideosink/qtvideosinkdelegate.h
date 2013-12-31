@@ -108,6 +108,9 @@ public:
     bool forceAspectRatio() const;
     void setForceAspectRatio(bool force);
 
+    BufferFormat bufferFormat() const;
+    void setBufferFormat(BufferFormat &format);
+
 #ifndef GST_QT_VIDEO_SINK_NO_OPENGL
     // glcontext property
     QGLContext *glContext() const;
@@ -154,6 +157,7 @@ private:
 
     // format caching
     bool m_formatDirty;
+    mutable QReadWriteLock m_bufferFormatLock;
     BufferFormat m_bufferFormat;
     PaintAreas m_areas;
     QRectF m_clipRect;

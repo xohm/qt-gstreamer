@@ -167,6 +167,24 @@ void QtVideoSinkDelegate::setForceAspectRatio(bool force)
 
 //-------------------------------------
 
+BufferFormat QtVideoSinkDelegate::bufferFormat() const
+{
+    QReadLocker l(&m_bufferFormatLock);
+    return m_bufferFormat;
+}
+
+void QtVideoSinkDelegate::setBufferFormat(BufferFormat &format)
+{
+    QWriteLocker l(&m_bufferFormatLock);
+    if (m_bufferFormat != format) {
+        m_bufferFormat = format;
+        m_formatDirty = true;
+//        changePainter(m_bufferFormat);
+    }
+}
+
+//-------------------------------------
+
 void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
 {
     GST_TRACE_OBJECT(m_sink, "paint called");
@@ -184,76 +202,80 @@ void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
     if (!m_buffer) {
         painter->fillRect(targetArea, Qt::black);
     } else {
-        ; // FIXME
-//         BufferFormat format = m_formatDirty ?
-//                 BufferFormat::fromCaps(GST_BUFFER_CAPS(m_buffer)) : m_bufferFormat;
-// 
-//         //recalculate the video area if needed
-//         QReadLocker forceAspectRatioLocker(&m_forceAspectRatioLock);
-//         if (targetArea != m_areas.targetArea
+        BufferFormat format = m_bufferFormat;
+
+        //recalculate the video area if needed
+        QReadLocker forceAspectRatioLocker(&m_forceAspectRatioLock);
+        if (targetArea != m_areas.targetArea
 //              || (m_formatDirty && (format.frameSize() != m_bufferFormat.frameSize()
 //                                || format.pixelAspectRatio() != m_bufferFormat.pixelAspectRatio()))
-//              || m_forceAspectRatioDirty)
-//         {
-//             m_forceAspectRatioDirty = false;
-// 
-//             if (m_forceAspectRatio) {
-//                 QReadLocker pixelAspectRatioLocker(&m_pixelAspectRatioLock);
-//                 m_areas.calculate(targetArea, format.frameSize(),
-//                                   format.pixelAspectRatio(), m_pixelAspectRatio);
-//             } else {
-//                 m_areas.targetArea = targetArea;
-//                 m_areas.videoArea = targetArea;
-//                 m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
-//             }
-// 
-//             GST_LOG_OBJECT(m_sink,
-//                 "Recalculated paint areas: "
-//                 "Frame size: " QSIZE_FORMAT ", "
-//                 "target area: " QRECTF_FORMAT ", "
-//                 "video area: " QRECTF_FORMAT ", "
-//                 "black1: " QRECTF_FORMAT ", "
-//                 "black2: " QRECTF_FORMAT,
-//                 QSIZE_FORMAT_ARGS(format.frameSize()),
-//                 QRECTF_FORMAT_ARGS(m_areas.targetArea),
-//                 QRECTF_FORMAT_ARGS(m_areas.videoArea),
-//                 QRECTF_FORMAT_ARGS(m_areas.blackArea1),
-//                 QRECTF_FORMAT_ARGS(m_areas.blackArea2)
-//             );
-//         }
-//         forceAspectRatioLocker.unlock();
-// 
-//         if (m_formatDirty /* || m_clipRectDirty */) {
-//             //TODO add properties for modifying clipRect
-//             m_clipRect = QRectF(QPointF(0,0), format.frameSize());
-//         }
-// 
-//         //if either pixelFormat or frameSize have changed, we need to reset the painter
-//         //and/or change painter, in case the current one does not handle the requested format
-//         if ((m_formatDirty && (format.videoFormat() != m_bufferFormat.videoFormat()
+             || m_forceAspectRatioDirty)
+        {
+            m_forceAspectRatioDirty = false;
+
+            if (m_forceAspectRatio) {
+                QReadLocker pixelAspectRatioLocker(&m_pixelAspectRatioLock);
+                m_areas.calculate(targetArea, format.frameSize(),
+                                  format.pixelAspectRatio(), m_pixelAspectRatio);
+            } else {
+                m_areas.targetArea = targetArea;
+                m_areas.videoArea = targetArea;
+                m_areas.blackArea1 = m_areas.blackArea2 = QRectF();
+            }
+
+            GST_LOG_OBJECT(m_sink,
+                "Recalculated paint areas: "
+                "Frame size: " QSIZE_FORMAT ", "
+                "target area: " QRECTF_FORMAT ", "
+                "video area: " QRECTF_FORMAT ", "
+                "black1: " QRECTF_FORMAT ", "
+                "black2: " QRECTF_FORMAT,
+                QSIZE_FORMAT_ARGS(format.frameSize()),
+                QRECTF_FORMAT_ARGS(m_areas.targetArea),
+                QRECTF_FORMAT_ARGS(m_areas.videoArea),
+                QRECTF_FORMAT_ARGS(m_areas.blackArea1),
+                QRECTF_FORMAT_ARGS(m_areas.blackArea2)
+            );
+        }
+        forceAspectRatioLocker.unlock();
+
+        if (m_formatDirty /* || m_clipRectDirty */) {
+            //TODO add properties for modifying clipRect
+            m_clipRect = QRectF(QPointF(0,0), format.frameSize());
+        }
+
+        //if either pixelFormat or frameSize have changed, we need to reset the painter
+        //and/or change painter, in case the current one does not handle the requested format
+        if ((m_formatDirty
+//                 && (format.videoFormat() != m_bufferFormat.videoFormat()
 //                 || format.colorMatrix() != m_bufferFormat.colorMatrix()
-//                 || format.frameSize() != m_bufferFormat.frameSize()))
-//             || !m_painter)
-//         {
-//             changePainter(format);
-// 
-//             m_bufferFormat = format;
-//             m_formatDirty = false;
-// 
-//             //make sure to update the colors after changing painter
-//             m_colorsDirty = true;
-//         }
-// 
-//         if (G_LIKELY(m_painter)) {
-//             QReadLocker colorsLocker(&m_colorsLock);
-//             if (m_colorsDirty) {
-//                 m_painter->updateColors(m_brightness, m_contrast, m_hue, m_saturation);
-//                 m_colorsDirty = false;
-//             }
-//             colorsLocker.unlock();
-// 
-//             m_painter->paint(m_buffer->data, m_bufferFormat, m_clipRect, painter, m_areas);
-//         }
+//                 || format.frameSize() != m_bufferFormat.frameSize())
+            )
+            || !m_painter)
+        {
+            changePainter(format);
+
+            m_bufferFormat = format;
+            m_formatDirty = false;
+
+            //make sure to update the colors after changing painter
+            m_colorsDirty = true;
+        }
+
+        if (G_LIKELY(m_painter)) {
+            QReadLocker colorsLocker(&m_colorsLock);
+            if (m_colorsDirty) {
+                m_painter->updateColors(m_brightness, m_contrast, m_hue, m_saturation);
+                m_colorsDirty = false;
+            }
+            colorsLocker.unlock();
+
+            GstMapInfo mem_info;
+            if (gst_buffer_map(m_buffer, &mem_info, GST_MAP_READ)) {
+                m_painter->paint(mem_info.data, m_bufferFormat, m_clipRect, painter, m_areas);
+                gst_buffer_unmap(m_buffer, &mem_info);
+            }
+        }
     }
 }
 
