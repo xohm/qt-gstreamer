@@ -806,13 +806,16 @@ void QtVideoSinkTest::qtVideoSinkTest()
     QVERIFY(buffer);
     QVERIFY(gst_buffer_map(buffer, &info, GST_MAP_READ));
 
-    QVERIFY(0); // FIXME: replace get_row_stride
     { //increased scope so that expectedImage gets deleted before the sample
-//         QImage expectedImage(info.data,
-//                 widgetSize.width(), widgetSize.height(),
-//                 gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width()),
-//                 QImage::Format_ARGB32);
-//         QImage actualImage = QPixmap::grabWindow(widget->winId()).toImage();
+        // replacing gst_video_format_get_row_stride(imageFormat, 0, widgetSize.width())
+        const GstVideoFormatInfo *video_info = gst_video_format_get_info(imageFormat);
+        QVERIFY(video_info);
+
+        QImage expectedImage(info.data,
+                widgetSize.width(), widgetSize.height(),
+                GST_VIDEO_FORMAT_INFO_PSTRIDE(video_info, 0) * widgetSize.width(),
+                QImage::Format_ARGB32);
+        QImage actualImage = QPixmap::grabWindow(widget->winId()).toImage();
 
 #if 0
         // visual debugging
@@ -843,7 +846,7 @@ void QtVideoSinkTest::qtVideoSinkTest()
         QTest::qWait(1000); //just for visual feedback
 #endif
 
-//         imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
+        imageCompare(actualImage, expectedImage, forceAspectRatio ? sourceSize : QSize());
         gst_buffer_unmap(buffer, &info);
     }
 }
@@ -978,8 +981,8 @@ void QtVideoSinkTest::imageCompare(const QImage & image1, const QImage & image2,
     // do not compare scaling artifacts - this algorithm depends on videotestsrc's pattern 19
     qreal colorChangePoint = barsArea.width() / 7.0;
 
-    // omit 6% of the pixels before and after the color change
-    int area = qRound(colorChangePoint * 0.06);
+    // omit 9% of the pixels before and after the color change
+    int area = qRound(colorChangePoint * 0.09);
     hStartStopPoints.append(barsArea.left() + 2);
     for (int i = 1; i < 7; i++) {
         hStartStopPoints.append(barsArea.left() + int(colorChangePoint * i) - area);
