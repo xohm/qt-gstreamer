@@ -79,6 +79,8 @@ set(QtGStreamer_INSTALLED_HEADERS
     query.h             Query
     clock.h             Clock
     buffer.h            Buffer
+    sample.h            Sample
+    memory.h            Memory
     event.h             Event
     clocktime.h         ClockTime
     taglist.h           TagList
