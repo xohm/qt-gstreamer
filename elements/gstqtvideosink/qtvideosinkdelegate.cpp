@@ -167,6 +167,24 @@ void QtVideoSinkDelegate::setForceAspectRatio(bool force)
 
 //-------------------------------------
 
+BufferFormat QtVideoSinkDelegate::bufferFormat() const
+{
+    QReadLocker l(&m_bufferFormatLock);
+    return m_bufferFormat;
+}
+
+void QtVideoSinkDelegate::setBufferFormat(BufferFormat &format)
+{
+    QWriteLocker l(&m_bufferFormatLock);
+    if (m_bufferFormat != format) {
+        m_bufferFormat = format;
+        m_formatDirty = true;
+//        changePainter(m_bufferFormat);
+    }
+}
+
+//-------------------------------------
+
 void QtVideoSinkDelegate::paint(QPainter *painter, const QRectF & targetArea)
 {
     GST_TRACE_OBJECT(m_sink, "paint called");
