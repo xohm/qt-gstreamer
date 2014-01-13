@@ -27,47 +27,6 @@
     }
 
 #include <glib-object.h>
-#include "QGlib/string_p.h"
-
-#include "QGlib/signal.h"
-
-namespace QGlib {
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunFirst) == static_cast<int>(G_SIGNAL_RUN_FIRST));
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunLast) == static_cast<int>(G_SIGNAL_RUN_LAST));
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunCleanup) == static_cast<int>(G_SIGNAL_RUN_CLEANUP));
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::NoRecurse) == static_cast<int>(G_SIGNAL_NO_RECURSE));
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::Detailed) == static_cast<int>(G_SIGNAL_DETAILED));
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::Action) == static_cast<int>(G_SIGNAL_ACTION));
-    BOOST_STATIC_ASSERT(static_cast<int>(Signal::NoHooks) == static_cast<int>(G_SIGNAL_NO_HOOKS));
-}
-
-#include "QGlib/paramspec.h"
-
-REGISTER_TYPE_IMPLEMENTATION(QGlib::ParamSpec,G_TYPE_PARAM)
-
-REGISTER_TYPE_IMPLEMENTATION(QGlib::ParamSpec::ParamFlags,G_TYPE_PARAM_FLAGS)
-
-namespace QGlib {
-  QGlib::RefCountedObject *ParamSpec_new(void *instance)
-  {
-    QGlib::ParamSpec *cppClass = new QGlib::ParamSpec;
-    cppClass->m_object = instance;
-    return cppClass;
-  }
-} //namespace QGlib
-
-namespace QGlib {
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Readable) == static_cast<int>(G_PARAM_READABLE));
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Writable) == static_cast<int>(G_PARAM_WRITABLE));
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::ReadWrite) == static_cast<int>(G_PARAM_READWRITE));
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Construct) == static_cast<int>(G_PARAM_CONSTRUCT));
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::ConstructOnly) == static_cast<int>(G_PARAM_CONSTRUCT_ONLY));
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::LaxValidation) == static_cast<int>(G_PARAM_LAX_VALIDATION));
-    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Deprecated) == static_cast<int>(G_PARAM_DEPRECATED));
-}
-
-#include "QGlib/global.h"
-
 #include "QGlib/value.h"
 
 REGISTER_TYPE_IMPLEMENTATION(QGlib::Value,G_TYPE_VALUE)
@@ -96,9 +55,46 @@ namespace QGlib {
   }
 } //namespace QGlib
 
+#include "QGlib/paramspec.h"
+
+REGISTER_TYPE_IMPLEMENTATION(QGlib::ParamSpec,G_TYPE_PARAM)
+
+REGISTER_TYPE_IMPLEMENTATION(QGlib::ParamSpec::ParamFlags,G_TYPE_PARAM_FLAGS)
+
+namespace QGlib {
+  QGlib::RefCountedObject *ParamSpec_new(void *instance)
+  {
+    QGlib::ParamSpec *cppClass = new QGlib::ParamSpec;
+    cppClass->m_object = instance;
+    return cppClass;
+  }
+} //namespace QGlib
+
+namespace QGlib {
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Readable) == static_cast<int>(G_PARAM_READABLE));
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Writable) == static_cast<int>(G_PARAM_WRITABLE));
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::ReadWrite) == static_cast<int>(G_PARAM_READWRITE));
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Construct) == static_cast<int>(G_PARAM_CONSTRUCT));
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::ConstructOnly) == static_cast<int>(G_PARAM_CONSTRUCT_ONLY));
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::LaxValidation) == static_cast<int>(G_PARAM_LAX_VALIDATION));
+    BOOST_STATIC_ASSERT(static_cast<int>(ParamSpec::Deprecated) == static_cast<int>(G_PARAM_DEPRECATED));
+}
+
+#include "QGlib/quark.h"
+
+#include "QGlib/wrap.h"
+
 #include "QGlib/error.h"
 
 REGISTER_TYPE_IMPLEMENTATION(QGlib::Error,G_TYPE_ERROR)
+
+#include "QGlib/init.h"
+
+#include "QGlib/global.h"
+
+#include "QGlib/refpointer.h"
+
+#include "QGlib/string_p.h"
 
 #include "QGlib/type.h"
 
@@ -128,25 +124,29 @@ namespace QGlib {
     BOOST_STATIC_ASSERT(static_cast<int>(Type::Object) == static_cast<int>(G_TYPE_OBJECT));
 }
 
-#include "QGlib/quark.h"
-
-#include "QGlib/refpointer.h"
-
 #include "QGlib/connect.h"
 
 
-#include "QGlib/init.h"
+#include "QGlib/signal.h"
 
-#include "QGlib/wrap.h"
+namespace QGlib {
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunFirst) == static_cast<int>(G_SIGNAL_RUN_FIRST));
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunLast) == static_cast<int>(G_SIGNAL_RUN_LAST));
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::RunCleanup) == static_cast<int>(G_SIGNAL_RUN_CLEANUP));
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::NoRecurse) == static_cast<int>(G_SIGNAL_NO_RECURSE));
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::Detailed) == static_cast<int>(G_SIGNAL_DETAILED));
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::Action) == static_cast<int>(G_SIGNAL_ACTION));
+    BOOST_STATIC_ASSERT(static_cast<int>(Signal::NoHooks) == static_cast<int>(G_SIGNAL_NO_HOOKS));
+}
 
 namespace QGlib {
 namespace Private {
   void registerWrapperConstructors()
   {
     QGlib::Quark q = g_quark_from_static_string("QGlib__wrapper_constructor");
-    QGlib::GetType<ParamSpec>().setQuarkData(q, reinterpret_cast<void*>(&ParamSpec_new));
     QGlib::GetType<Object>().setQuarkData(q, reinterpret_cast<void*>(&Object_new));
     QGlib::GetType<Interface>().setQuarkData(q, reinterpret_cast<void*>(&Interface_new));
+    QGlib::GetType<ParamSpec>().setQuarkData(q, reinterpret_cast<void*>(&ParamSpec_new));
   }
 } //namespace Private
 } //namespace QGlib
