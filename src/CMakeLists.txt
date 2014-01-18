@@ -56,9 +56,9 @@ if (QT_QTDECLARATIVE_FOUND)
 endif()
 
 # Install the cmake scripts that are used to find the installed library from external projects
-install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer)
+install(EXPORT ${EXPORT_TARGET_SET} DESTINATION ${LIB_INSTALL_DIR}/cmake/QtGStreamer)
 install(FILES ${CMAKE_SOURCE_DIR}/cmake/modules/FindQtGStreamer.cmake
-        DESTINATION ${LIB_INSTALL_DIR}/QtGStreamer
+        DESTINATION ${LIB_INSTALL_DIR}/cmake/QtGStreamer
         RENAME QtGStreamerConfig.cmake)
 
 # Install pkgconfig files
