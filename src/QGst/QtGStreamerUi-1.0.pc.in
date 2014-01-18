@@ -3,9 +3,9 @@ exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=@INCLUDES_INSTALL_DIR@
 
-Name: QtGStreamerUi-0.10
+Name: QtGStreamerUi-1.0
 Description: QtGui GStreamer integration library
-Requires: QtGui QtGStreamer-0.10
+Requires: QtGui QtGStreamer-1.0
 Version: @QTGSTREAMER_VERSION@
 Cflags: -I${includedir}
-Libs: -L${libdir} -lQtGStreamerUi-0.10
+Libs: -L${libdir} -lQtGStreamerUi-1.0

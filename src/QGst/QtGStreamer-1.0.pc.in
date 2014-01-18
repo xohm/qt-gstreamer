@@ -3,10 +3,10 @@ exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=@INCLUDES_INSTALL_DIR@
 
-Name: QtGStreamer-0.10
+Name: QtGStreamer-1.0
 Description: Qt-style C++ bindings library for GStreamer
 Requires: QtGLib-2.0
-Requires.private: gstreamer-0.10 gstreamer-interfaces-0.10 gobject-2.0
+Requires.private: gstreamer-1.0 gstreamer-interfaces-1.0 gobject-2.0
 Version: @QTGSTREAMER_VERSION@
 Cflags: -I${includedir}
-Libs: -L${libdir} -lQtGStreamer-0.10
+Libs: -L${libdir} -lQtGStreamer-1.0

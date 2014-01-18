@@ -3,10 +3,10 @@ exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=@INCLUDES_INSTALL_DIR@
 
-Name: QtGStreamerUtils-0.10
+Name: QtGStreamerUtils-1.0
 Description: QtGStreamer's high level utility classes
-Requires: QtGStreamer-0.10
-Requires.private: gstreamer-0.10 gstreamer-app-0.10
+Requires: QtGStreamer-1.0
+Requires.private: gstreamer-1.0 gstreamer-app-1.0
 Version: @QTGSTREAMER_VERSION@
 Cflags: -I${includedir}
-Libs: -L${libdir} -lQtGStreamerUtils-0.10
+Libs: -L${libdir} -lQtGStreamerUtils-1.0
